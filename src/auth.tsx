@@ -54,7 +54,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             redirectTo: window.location.origin,
             scopes: provider === "azure" ? "email openid profile" : undefined,
             queryParams:
-              provider === "azure" ? { prompt: "select_account" } : undefined,
+              provider === "google" || provider === "azure"
+                ? { prompt: "select_account" }
+                : undefined,
           },
         });
         return error?.message ?? null;
