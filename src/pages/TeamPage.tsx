@@ -1,6 +1,6 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Pencil, Plus, Trash2, Users, Crown, Code2, PenTool } from "lucide-react";
-import type { TeamMemberKind, TeamMemberRow } from "../../../shared/cms-types";
+import type { TeamMemberKind, TeamMemberRow } from "../lib/cms-types";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Drawer } from "../components/Drawer";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";

@@ -16,7 +16,7 @@ import {
   Trash2,
   Users,
 } from "lucide-react";
-import type { JobRow, JobType } from "../../../shared/cms-types";
+import type { JobRow, JobType } from "../lib/cms-types";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Drawer } from "../components/Drawer";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";

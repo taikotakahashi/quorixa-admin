@@ -1,6 +1,6 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Boxes, ExternalLink, Pencil, Plus, Send, Star, Trash2 } from "lucide-react";
-import type { CaseStudyRow, CaseStudyTag } from "../../../shared/cms-types";
+import type { CaseStudyRow, CaseStudyTag } from "../lib/cms-types";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Drawer } from "../components/Drawer";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";

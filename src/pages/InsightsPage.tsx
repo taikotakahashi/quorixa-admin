@@ -1,6 +1,6 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { ExternalLink, FileText, MapPin, Newspaper, Pencil, Plus, Trash2 } from "lucide-react";
-import type { InsightRow, InsightSection } from "../../../shared/cms-types";
+import type { InsightRow, InsightSection } from "../lib/cms-types";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Drawer } from "../components/Drawer";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";
