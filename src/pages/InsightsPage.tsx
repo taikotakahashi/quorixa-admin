@@ -226,7 +226,7 @@ export function InsightsPage() {
                       <div className="row-actions">
                         <a
                           className="btn btn-sm btn-ghost"
-                          href={`http://localhost:5173/insights/${row.id}`}
+                          href={`http://quorixa-solution.vercel.app/insights/${row.id}`}
                           target="_blank"
                           rel="noreferrer"
                         >

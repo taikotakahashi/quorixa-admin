@@ -270,7 +270,7 @@ export function CaseStudiesPage() {
                       <div className="row-actions">
                         <a
                           className="btn btn-sm btn-ghost"
-                          href={`http://localhost:5173/our-work/${row.id}`}
+                          href={`http://quorixa-solution.vercel.app//our-work/${row.id}`}
                           target="_blank"
                           rel="noreferrer"
                         >

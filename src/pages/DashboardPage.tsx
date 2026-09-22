@@ -155,7 +155,7 @@ export function DashboardPage() {
             <Link to="/jobs?new=1" className="btn btn-primary">
               <Plus size={15} /> New Job
             </Link>
-            <a className="btn" href="http://localhost:5173" target="_blank" rel="noreferrer">
+            <a className="btn" href="http://quorixa-solution.vercel.app" target="_blank" rel="noreferrer">
               <BookOpen size={15} /> View Guide
             </a>
           </div>

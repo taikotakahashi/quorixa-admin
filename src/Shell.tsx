@@ -118,7 +118,7 @@ export function Shell({ children }: { children: ReactNode }) {
             </div>
             <ChevronRight size={16} />
           </div>
-          <a className="nav-link" href="http://localhost:5173" target="_blank" rel="noreferrer">
+          <a className="nav-link" href="http://quorixa-solution.vercel.app" target="_blank" rel="noreferrer">
             <ExternalLink size={17} strokeWidth={1.9} />
             View website
           </a>
