@@ -1,7 +1,7 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { ChevronRight, Eye, EyeOff, Lock, Mail, Shield, Users, Zap } from "lucide-react";
-import { useAuth } from "../auth";
+import { useAuth, type OAuthProvider } from "../auth";
 import { supabase } from "../lib/supabase";
 import logo from "../assets/uorixa-logo.png";
 
@@ -39,14 +39,14 @@ function MicrosoftIcon() {
 }
 
 export function LoginPage() {
-  const { session, signIn, loading } = useAuth();
+  const { session, signIn, signInWithProvider, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [keep, setKeep] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
-  const [busy, setBusy] = useState<"in" | "reset" | null>(null);
+  const [busy, setBusy] = useState<"in" | "reset" | OAuthProvider | null>(null);
 
   if (loading) {
     return (
@@ -83,9 +83,15 @@ export function LoginPage() {
     else setNotice("Password reset email sent.");
   };
 
-  const unavailable = (message: string) => {
+  const onProvider = async (provider: OAuthProvider) => {
+    setBusy(provider);
     setError(null);
-    setNotice(message);
+    setNotice(null);
+    const err = await signInWithProvider(provider);
+    if (err) {
+      setError(err);
+      setBusy(null);
+    }
   };
 
   return (
@@ -194,13 +200,25 @@ export function LoginPage() {
           <p className="qx-or">or continue with</p>
 
           <div className="qx-social">
-            <SocialButton label="Continue with Google" onClick={() => unavailable("Use your email and password to sign in.")}>
+            <SocialButton
+              label="Continue with Google"
+              disabled={busy !== null}
+              onClick={() => void onProvider("google")}
+            >
               <GoogleIcon />
             </SocialButton>
-            <SocialButton label="Continue with Apple" onClick={() => unavailable("Use your email and password to sign in.")}>
+            <SocialButton
+              label="Continue with Apple"
+              disabled={busy !== null}
+              onClick={() => void onProvider("apple")}
+            >
               <AppleIcon />
             </SocialButton>
-            <SocialButton label="Continue with Microsoft" onClick={() => unavailable("Use your email and password to sign in.")}>
+            <SocialButton
+              label="Continue with Microsoft"
+              disabled={busy !== null}
+              onClick={() => void onProvider("azure")}
+            >
               <MicrosoftIcon />
             </SocialButton>
           </div>
@@ -221,14 +239,22 @@ export function LoginPage() {
 function SocialButton({
   label,
   onClick,
+  disabled,
   children,
 }: {
   label: string;
   onClick: () => void;
+  disabled?: boolean;
   children: ReactNode;
 }) {
   return (
-    <button type="button" className="qx-social-btn" aria-label={label} onClick={onClick}>
+    <button
+      type="button"
+      className="qx-social-btn"
+      aria-label={label}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {children}
     </button>
   );

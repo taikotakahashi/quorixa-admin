@@ -9,10 +9,13 @@ import {
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "./lib/supabase";
 
+export type OAuthProvider = "google" | "apple" | "azure";
+
 type AuthCtx = {
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<string | null>;
+  signInWithProvider: (provider: OAuthProvider) => Promise<string | null>;
   signOut: () => Promise<void>;
 };
 
@@ -41,6 +44,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
+        });
+        return error?.message ?? null;
+      },
+      async signInWithProvider(provider) {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider,
+          options: {
+            redirectTo: window.location.origin,
+            scopes: provider === "azure" ? "email openid profile" : undefined,
+            queryParams:
+              provider === "azure" ? { prompt: "select_account" } : undefined,
+          },
         });
         return error?.message ?? null;
       },
