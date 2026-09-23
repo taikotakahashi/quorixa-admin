@@ -16,28 +16,6 @@ function GoogleIcon() {
   );
 }
 
-function AppleIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        fill="#fff"
-        d="M16.7 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.2-2.8.8-3.5.8s-1.8-.8-3-.8c-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.3 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7 2-1.1 2.8-2.2c.9-1.3 1.2-2.5 1.3-2.6-.1 0-2.4-.9-2.5-3.8zM14.8 6.5c.6-.8 1.1-1.9.9-3-1 .1-2.1.6-2.8 1.4-.6.7-1.2 1.8-.9 2.9 1.1.1 2.1-.5 2.8-1.3z"
-      />
-    </svg>
-  );
-}
-
-function MicrosoftIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 23 23" aria-hidden="true">
-      <path fill="#f25022" d="M1 1h10v10H1z" />
-      <path fill="#7fba00" d="M12 1h10v10H12z" />
-      <path fill="#00a4ef" d="M1 12h10v10H1z" />
-      <path fill="#ffb900" d="M12 12h10v10H12z" />
-    </svg>
-  );
-}
-
 export function LoginPage() {
   const { session, signIn, signInWithProvider, loading } = useAuth();
   const [email, setEmail] = useState("");
@@ -206,20 +184,7 @@ export function LoginPage() {
               onClick={() => void onProvider("google")}
             >
               <GoogleIcon />
-            </SocialButton>
-            <SocialButton
-              label="Continue with Apple"
-              disabled={busy !== null}
-              onClick={() => void onProvider("apple")}
-            >
-              <AppleIcon />
-            </SocialButton>
-            <SocialButton
-              label="Continue with Microsoft"
-              disabled={busy !== null}
-              onClick={() => void onProvider("azure")}
-            >
-              <MicrosoftIcon />
+              Google
             </SocialButton>
           </div>
         </form>

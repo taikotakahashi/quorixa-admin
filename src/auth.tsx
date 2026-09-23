@@ -9,7 +9,7 @@ import {
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "./lib/supabase";
 
-export type OAuthProvider = "google" | "apple" | "azure";
+export type OAuthProvider = "google";
 
 type AuthCtx = {
   session: Session | null;
@@ -52,11 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           provider,
           options: {
             redirectTo: window.location.origin,
-            scopes: provider === "azure" ? "email openid profile" : undefined,
-            queryParams:
-              provider === "google" || provider === "azure"
-                ? { prompt: "select_account" }
-                : undefined,
+            queryParams: { prompt: "select_account" },
           },
         });
         return error?.message ?? null;
