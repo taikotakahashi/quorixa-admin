@@ -34,7 +34,8 @@
 html,
 body,
 #root {
-  min-height: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -68,7 +69,8 @@ button:disabled {
 .layout {
   display: grid;
   grid-template-columns: var(--nav-w) 1fr;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   background: var(--bg);
 }
 
@@ -76,7 +78,8 @@ button:disabled {
   position: sticky;
   top: 0;
   height: 100vh;
-  overflow: auto;
+  width: var(--nav-w);
+  overflow: hidden;
   background: #16122c;
   color: #e8e6f4;
   padding: 18px 14px 14px;
@@ -84,6 +87,7 @@ button:disabled {
   flex-direction: column;
   gap: 2px;
   z-index: 30;
+  min-width: 0;
 }
 
 .brand {
@@ -115,6 +119,8 @@ button:disabled {
   letter-spacing: 0.12em;
   color: #b7b4cc;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 
@@ -172,6 +178,14 @@ button:disabled {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: none;
+}
+
+.side-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .nav-link,
@@ -218,18 +232,28 @@ button:disabled {
   padding-top: 12px;
   display: grid;
   gap: 4px;
+  min-width: 0;
+}
+
+.sidebar-foot > * {
+  min-width: 0;
 }
 
 .upgrade-card {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 8px 4px 10px;
+  margin: 8px 0 10px;
   padding: 12px;
   border-radius: 16px;
   background: linear-gradient(180deg, #2a2158 0%, #241b4a 100%);
   border: 1px solid rgba(167, 139, 250, 0.28);
   color: #fff;
+  min-width: 0;
+}
+
+.upgrade-card > div {
+  min-width: 0;
 }
 
 .upgrade-icon {
@@ -267,10 +291,17 @@ button:disabled {
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%;
+  min-width: 0;
   padding: 10px 12px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.user-chip > svg {
+  flex-shrink: 0;
+  color: #8b86a8;
 }
 
 .user-avatar {
@@ -302,8 +333,12 @@ button:disabled {
 }
 
 .user-meta span {
+  display: block;
   font-size: 11px;
-  color: #64748b;
+  color: #9b95b5;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .signout-btn {
@@ -328,6 +363,8 @@ button:disabled {
 
 .main-wrap {
   min-width: 0;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -489,9 +526,16 @@ button:disabled {
 }
 
 .main {
-  padding: 22px 24px 40px;
+  padding: 22px 24px 28px;
   flex: 1;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: none;
   background: var(--bg);
+}
+
+.main::-webkit-scrollbar {
+  display: none;
 }
 
 /* ---------- Shared UI ---------- */
@@ -1363,20 +1407,19 @@ table.data tr:last-child td {
 
 .drawer {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  width: var(--drawer-w);
-  height: min(860px, calc(100vh - 48px));
-  transform: translate(-50%, -50%);
+  top: 0;
+  right: 0;
+  width: min(440px, 100vw);
+  height: 100vh;
   background: #fff;
   z-index: 50;
   display: flex;
   flex-direction: column;
-  border-radius: 24px;
+  border-radius: 22px 0 0 22px;
   box-shadow:
-    0 24px 64px rgba(15, 23, 42, 0.22),
+    -16px 0 48px rgba(15, 23, 42, 0.16),
     0 0 0 1px rgba(15, 23, 42, 0.04);
-  animation: popIn 0.22s ease;
+  animation: drawerIn 0.28s ease;
   overflow: hidden;
 }
 
@@ -1449,9 +1492,14 @@ table.data tr:last-child td {
   position: relative;
   padding: 22px 24px;
   overflow: auto;
+  scrollbar-width: none;
   display: grid;
   gap: 16px;
   flex: 1;
+}
+
+.drawer-body::-webkit-scrollbar {
+  display: none;
 }
 
 .drawer-footer {
@@ -2327,14 +2375,12 @@ body:has(.login-page) {
   }
 }
 
-@keyframes popIn {
+@keyframes drawerIn {
   from {
-    opacity: 0;
-    transform: translate(-50%, -46%);
+    transform: translateX(100%);
   }
   to {
-    opacity: 1;
-    transform: translate(-50%, -50%);
+    transform: translateX(0);
   }
 }
 
@@ -2418,12 +2464,7 @@ body:has(.login-page) {
   }
 
   .drawer {
-    top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
     border-radius: 0;
-    transform: none;
-    animation: none;
   }
 }
