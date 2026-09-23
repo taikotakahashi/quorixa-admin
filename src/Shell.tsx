@@ -15,6 +15,7 @@ import {
   Menu,
   Search,
   Settings,
+  Shield,
   Users,
   X,
 } from "lucide-react";
@@ -28,6 +29,7 @@ const links = [
   { to: "/insights", label: "Insights", icon: FileText },
   { to: "/case-studies", label: "Case studies", icon: FolderKanban },
   { to: "/clients", label: "Clients", icon: Building2 },
+  { to: "/users", label: "Users", icon: Shield },
 ];
 
 function displayName(email: string) {
@@ -60,7 +62,7 @@ function BrandMark() {
 }
 
 export function Shell({ children }: { children: ReactNode }) {
-  const { signOut, session } = useAuth();
+  const { signOut, session, profile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
@@ -126,7 +128,7 @@ export function Shell({ children }: { children: ReactNode }) {
             <div className="user-avatar">{initial}</div>
             <div className="user-meta">
               <strong title={email}>{email || "Admin"}</strong>
-              <span>Administrator</span>
+              <span>{profile?.role === "admin" ? "Administrator" : "Member"}</span>
             </div>
             <ChevronRight size={16} />
           </div>
@@ -178,7 +180,7 @@ export function Shell({ children }: { children: ReactNode }) {
                 <div className="user-avatar">{initial}</div>
                 <div className="user-meta">
                   <strong>{name}</strong>
-                  <span>Administrator</span>
+                  <span>{profile?.role === "admin" ? "Administrator" : "Member"}</span>
                 </div>
               </div>
             )}

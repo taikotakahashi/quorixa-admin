@@ -17,14 +17,16 @@ function GoogleIcon() {
 }
 
 export function LoginPage() {
-  const { session, signIn, signInWithProvider, loading } = useAuth();
+  const { session, signIn, signUp, signInWithProvider, loading } = useAuth();
+  const [mode, setMode] = useState<"in" | "up">("in");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [keep, setKeep] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
-  const [busy, setBusy] = useState<"in" | "reset" | OAuthProvider | null>(null);
+  const [busy, setBusy] = useState<"in" | "up" | "reset" | OAuthProvider | null>(null);
 
   if (loading) {
     return (
@@ -39,9 +41,29 @@ export function LoginPage() {
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setBusy("in");
     setError(null);
     setNotice(null);
+    if (mode === "up") {
+      if (name.trim().length < 2) {
+        setError("Enter your name.");
+        return;
+      }
+      if (password.length < 8) {
+        setError("Use at least 8 characters for the password.");
+        return;
+      }
+      setBusy("up");
+      const result = await signUp(name.trim(), email.trim(), password);
+      setBusy(null);
+      if (result === "CONFIRM") {
+        setNotice("Account created. Confirm the email if asked, then wait for an administrator to grant access.");
+        setMode("in");
+      } else if (result) {
+        setError(result);
+      }
+      return;
+    }
+    setBusy("in");
     const err = await signIn(email.trim(), password);
     if (err) setError(err);
     setBusy(null);
@@ -106,8 +128,28 @@ export function LoginPage() {
 
         <form className="qx-card" onSubmit={(e) => void onSubmit(e)}>
           <img src={logo} alt="UORIXA" className="qx-logo qx-logo-card" />
-          <h1>Welcome back</h1>
-          <p className="qx-lead">Sign in to manage tasks, team, goals, and projects.</p>
+          <h1>{mode === "up" ? "Create account" : "Welcome back"}</h1>
+          <p className="qx-lead">
+            {mode === "up"
+              ? "Register, then wait for an administrator to grant access."
+              : "Sign in to manage tasks, team, goals, and projects."}
+          </p>
+
+          {mode === "up" && (
+            <label className="qx-field">
+              <span>Name</span>
+              <div className="qx-input">
+                <Users size={16} strokeWidth={1.75} />
+                <input
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  autoComplete="name"
+                  placeholder="Your name"
+                />
+              </div>
+            </label>
+          )}
 
           <label className="qx-field">
             <span>Email</span>
@@ -134,7 +176,8 @@ export function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                autoComplete="current-password"
+                autoComplete={mode === "up" ? "new-password" : "current-password"}
+                minLength={mode === "up" ? 8 : undefined}
                 placeholder="••••••••"
               />
               <button
@@ -148,16 +191,18 @@ export function LoginPage() {
             </div>
           </label>
 
-          <div className="qx-row">
-            <label className="qx-check">
-              <input type="checkbox" checked={keep} onChange={(e) => setKeep(e.target.checked)} />
-              <span className="qx-box" aria-hidden="true" />
-              Keep me signed in
-            </label>
-            <button type="button" className="qx-forgot" onClick={() => void onForgot()} disabled={busy !== null}>
-              Forgot password?
-            </button>
-          </div>
+          {mode === "in" && (
+            <div className="qx-row">
+              <label className="qx-check">
+                <input type="checkbox" checked={keep} onChange={(e) => setKeep(e.target.checked)} />
+                <span className="qx-box" aria-hidden="true" />
+                Keep me signed in
+              </label>
+              <button type="button" className="qx-forgot" onClick={() => void onForgot()} disabled={busy !== null}>
+                Forgot password?
+              </button>
+            </div>
+          )}
 
           {error && (
             <p className="qx-alert" role="alert">
@@ -171,8 +216,14 @@ export function LoginPage() {
           )}
 
           <button className="qx-submit" type="submit" disabled={busy !== null}>
-            {busy === "in" ? "Signing in…" : "Sign in"}
-            {busy !== "in" && <ChevronRight size={16} strokeWidth={2} />}
+            {busy === "in" || busy === "up"
+              ? mode === "up"
+                ? "Creating account…"
+                : "Signing in…"
+              : mode === "up"
+                ? "Create account"
+                : "Sign in"}
+            {busy !== "in" && busy !== "up" && <ChevronRight size={16} strokeWidth={2} />}
           </button>
 
           <p className="qx-or">or continue with</p>
@@ -187,6 +238,18 @@ export function LoginPage() {
               Google
             </SocialButton>
           </div>
+          <p className="qx-hint">New accounts, including Google, stay pending until an administrator grants access.</p>
+          <button
+            type="button"
+            className="qx-switch"
+            onClick={() => {
+              setMode((current) => (current === "in" ? "up" : "in"));
+              setError(null);
+              setNotice(null);
+            }}
+          >
+            {mode === "in" ? "Create an account" : "Already have an account? Sign in"}
+          </button>
         </form>
 
         <aside className="qx-quote">
