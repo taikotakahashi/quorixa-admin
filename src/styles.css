@@ -275,6 +275,8 @@ button:disabled {
 
 .upgrade-card span {
   display: block;
+  text-align: center;
+  display: flex;
   margin-top: 2px;
   font-size: 11px;
   line-height: 1.35;
@@ -282,8 +284,9 @@ button:disabled {
 }
 
 .upgrade-card svg:last-child {
-  margin-left: auto;
+  /* margin-left: auto; */
   color: #c4b5fd;
+  margin: auto;
   flex-shrink: 0;
 }
 
@@ -1827,9 +1830,20 @@ table.data tr:last-child td {
   cursor: pointer;
 }
 
+html:has(.qx-login),
+html:has(.login-page),
 body:has(.qx-login),
 body:has(.login-page) {
+  height: auto;
+  overflow: auto;
   background: #050814;
+}
+
+#root:has(.qx-login),
+#root:has(.login-page) {
+  height: auto;
+  min-height: 100%;
+  overflow: visible;
 }
 
 .login-page,
@@ -2348,17 +2362,34 @@ body:has(.login-page) {
     display: none;
   }
 
-  .qx-hero h1 {
-    font-size: 34px;
+  .qx-hero {
+    display: none;
   }
 
-  .qx-features {
-    gap: 18px;
+  .qx-login {
+    overflow-x: hidden;
+  }
+
+  .qx-stage {
+    width: 100%;
+    min-width: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 28px 16px 20px;
+    align-content: center;
   }
 
   .qx-card {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
     padding: 24px 18px 18px;
     border-radius: 22px;
+  }
+
+  .qx-row {
+    flex-wrap: wrap;
+    row-gap: 8px;
   }
 }
 
@@ -2419,9 +2450,11 @@ body:has(.login-page) {
   .sidebar {
     position: fixed;
     inset: 0 auto 0 0;
-    width: var(--nav-w);
+    width: min(300px, 86vw);
+    padding-bottom: calc(14px + env(safe-area-inset-bottom));
     transform: translateX(-105%);
     transition: transform 0.2s ease;
+    box-shadow: 16px 0 40px rgba(8, 6, 20, 0.28);
   }
 
   .sidebar.open {
@@ -2433,20 +2466,65 @@ body:has(.login-page) {
   }
 
   .main {
-    padding: 20px 16px 48px;
+    padding: 16px 14px calc(28px + env(safe-area-inset-bottom));
   }
 
   .topbar {
-    padding: 0 16px;
+    height: 60px;
+    gap: 10px;
+    padding: 0 12px 0 max(12px, env(safe-area-inset-left));
   }
 
-  .top-search {
+  .top-search,
+  .phase-pill,
+  .top-user .user-meta {
     display: none;
   }
 
+  .breadcrumb {
+    font-size: 13px;
+  }
+
+  .crumb-current {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .studio-banner,
+  .dash-hero {
+    padding: 18px 16px;
+    border-radius: 16px;
+  }
+
+  .studio-banner h1,
+  .dash-hero h1 {
+    font-size: 26px;
+  }
+
+  .studio-banner-art,
+  .dash-hero-art {
+    display: none;
+  }
+
+  .dash-hero-actions {
+    flex-wrap: wrap;
+  }
+
   .metric-row,
-  .metric-row-4 {
-    grid-template-columns: 1fr;
+  .metric-row-4,
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .stat-card {
+    min-height: 0;
+    padding: 14px;
+  }
+
+  .stat-card strong {
+    font-size: 26px;
   }
 
   .jobs-page-head {
@@ -2459,12 +2537,92 @@ body:has(.login-page) {
     grid-template-columns: 1fr;
   }
 
-  .stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .search {
+    min-width: 0;
+    max-width: none;
+    flex: 1 1 100%;
+  }
+
+  .filters,
+  .sort-chip {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table.data {
+    min-width: 640px;
+  }
+
+  .row-actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
 
   .drawer {
     width: 100%;
     border-radius: 0;
+  }
+
+  .drawer-header,
+  .drawer-body,
+  .drawer-footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .drawer-footer {
+    flex-wrap: wrap;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+
+  .drawer-footer .btn,
+  .drawer-footer .right {
+    flex: 1 1 auto;
+  }
+
+  .field input,
+  .field select,
+  .field textarea,
+  .search input,
+  .qx-input input {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar-actions .icon-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .live-foot,
+  .promo {
+    align-items: flex-start;
+  }
+
+  .promo span {
+    display: block;
+  }
+
+  .user-actions {
+    display: grid;
+    justify-content: stretch;
+  }
+
+  .user-actions .btn {
+    width: 100%;
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .modal-actions .btn {
+    width: 100%;
   }
 }
