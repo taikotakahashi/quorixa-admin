@@ -1383,6 +1383,7 @@ button:disabled {
 .field {
   display: grid;
   gap: 7px;
+  min-width: 0;
 }
 
 .field > span,
@@ -1397,12 +1398,30 @@ button:disabled {
 .field textarea,
 .input {
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
   border: 1px solid #dbe3ee;
   background: #fff;
   border-radius: 7px;
   padding: 10px 12px;
   font-size: 14px;
   outline: none;
+}
+
+.field input[type="datetime-local"],
+.field input[type="date"],
+.field input[type="time"] {
+  min-width: 0;
+  max-width: 100%;
+  padding-right: 10px;
+}
+
+.field input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+.field input[type="date"]::-webkit-calendar-picker-indicator,
+.field input[type="time"]::-webkit-calendar-picker-indicator {
+  margin: 0;
+  cursor: pointer;
 }
 
 .field textarea {
@@ -1427,7 +1446,12 @@ button:disabled {
 .field-row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 14px;
+  align-items: start;
+}
+
+.field-row > .field {
+  min-width: 0;
 }
 
 .field-row-3 {
