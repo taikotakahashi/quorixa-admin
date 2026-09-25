@@ -9,6 +9,7 @@ import {
   FileText,
   FolderKanban,
   MapPin,
+  Megaphone,
   Pencil,
   Plus,
   Rocket,
@@ -80,6 +81,16 @@ const cards = [
     spark: sparks.b,
     trend: metricTrends.b,
   },
+  {
+    key: "announcements",
+    label: "Announcements",
+    to: "/announcements",
+    icon: Megaphone,
+    tint: "#fce7f3",
+    color: "#c026d3",
+    spark: sparks.c,
+    trend: metricTrends.c,
+  },
 ] as const;
 
 type Counts = Record<(typeof cards)[number]["key"], number>;
@@ -100,8 +111,9 @@ export function DashboardPage() {
     insights: 0,
     caseStudies: 0,
     clients: 0,
+    announcements: 0,
   });
-  const [published, setPublished] = useState({ jobs: 0, insights: 0 });
+  const [published, setPublished] = useState({ jobs: 0, insights: 0, announcements: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -113,6 +125,7 @@ export function DashboardPage() {
         ["insights", "insights"],
         ["case_studies", "caseStudies"],
         ["clients", "clients"],
+        ["announcements", "announcements"],
       ] as const;
 
       const next = { ...counts };
@@ -125,16 +138,25 @@ export function DashboardPage() {
         }),
       );
 
-      const [{ count: pubJobs }, { count: pubInsights }] = await Promise.all([
-        supabase.from("jobs").select("*", { count: "exact", head: true }).eq("published", true),
-        supabase
-          .from("insights")
-          .select("*", { count: "exact", head: true })
-          .eq("published", true),
-      ]);
+      const [{ count: pubJobs }, { count: pubInsights }, { count: pubAnnouncements }] =
+        await Promise.all([
+          supabase.from("jobs").select("*", { count: "exact", head: true }).eq("published", true),
+          supabase
+            .from("insights")
+            .select("*", { count: "exact", head: true })
+            .eq("published", true),
+          supabase
+            .from("announcements")
+            .select("*", { count: "exact", head: true })
+            .eq("published", true),
+        ]);
 
       setCounts(next);
-      setPublished({ jobs: pubJobs ?? 0, insights: pubInsights ?? 0 });
+      setPublished({
+        jobs: pubJobs ?? 0,
+        insights: pubInsights ?? 0,
+        announcements: pubAnnouncements ?? 0,
+      });
       setLoading(false);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -194,7 +216,7 @@ export function DashboardPage() {
           <p className="muted" style={{ margin: "0 0 4px" }}>
             {loading
               ? "Loading publish stats…"
-              : `${published.jobs} published jobs · ${published.insights} updated insights`}
+              : `${published.jobs} published jobs · ${published.insights} updated insights · ${published.announcements} live announcements`}
           </p>
 
           <div className="live-links">
@@ -205,6 +227,16 @@ export function DashboardPage() {
               <span className="live-copy">
                 <strong>Edit jobs</strong>
                 <small>Update job listings and details.</small>
+              </span>
+              <ChevronRight size={16} />
+            </Link>
+            <Link to="/announcements" className="live-link" style={{ background: "#fdf4ff" }}>
+              <span style={{ background: "#fce7f3", color: "#c026d3" }}>
+                <Megaphone size={14} />
+              </span>
+              <span className="live-copy">
+                <strong>Edit announcements</strong>
+                <small>Share news with website visitors.</small>
               </span>
               <ChevronRight size={16} />
             </Link>

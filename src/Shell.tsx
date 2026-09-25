@@ -1,7 +1,6 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState, type ReactNode } from "react";
 import {
-  Bell,
   Briefcase,
   Building2,
   ChevronRight,
@@ -12,6 +11,7 @@ import {
   LayoutDashboard,
   LogOut,
   MapPin,
+  Megaphone,
   Menu,
   MessageSquareQuote,
   Search,
@@ -21,6 +21,8 @@ import {
   X,
 } from "lucide-react";
 import { useAuth } from "./auth";
+import { CommandPalette, shortcutLabel } from "./components/CommandPalette";
+import { NotificationsMenu } from "./components/NotificationsMenu";
 import sidebarLogo from "./assets/uorixa-logo.png";
 
 const links = [
@@ -32,6 +34,7 @@ const links = [
   { to: "/case-studies", label: "Case studies", icon: FolderKanban },
   { to: "/clients", label: "Clients", icon: Building2 },
   { to: "/feedback", label: "Feedback", icon: MessageSquareQuote },
+  { to: "/announcements", label: "Announcements", icon: Megaphone },
   { to: "/users", label: "Users", icon: Shield },
 ];
 
@@ -47,6 +50,9 @@ export function Shell({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [shortcut, setShortcut] = useState("Ctrl K");
   const email = session?.user.email ?? "";
   const name = displayName(email);
   const initial = name.slice(0, 1).toUpperCase() || "A";
@@ -58,7 +64,29 @@ export function Shell({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setOpen(false);
+    setNotifOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    setShortcut(shortcutLabel());
+  }, []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setNotifOpen(false);
+        setPaletteOpen((v) => !v);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const openPalette = () => {
+    setNotifOpen(false);
+    setPaletteOpen(true);
+  };
 
   return (
     <div className="layout">
@@ -139,17 +167,14 @@ export function Shell({ children }: { children: ReactNode }) {
             <span className="crumb-current">{crumb}</span>
           </nav>
 
-          <label className="top-search">
+          <button type="button" className="top-search" onClick={openPalette}>
             <Search size={16} />
-            <input placeholder="Search anything..." aria-label="Search anything" />
-            <kbd>⌘K</kbd>
-          </label>
+            <span className="top-search-placeholder">Search anything...</span>
+            <kbd>{shortcut}</kbd>
+          </button>
 
           <div className="topbar-actions">
-            <button type="button" className="icon-btn" aria-label="Notifications">
-              <Bell size={17} />
-              <span className="dot" />
-            </button>
+            <NotificationsMenu open={notifOpen} onOpenChange={setNotifOpen} />
             {showPhase ? (
               <span className="phase-pill">Phase | CMS</span>
             ) : (
@@ -174,6 +199,8 @@ export function Shell({ children }: { children: ReactNode }) {
           aria-hidden
         />
       ) : null}
+
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
     </div>
   );
 }

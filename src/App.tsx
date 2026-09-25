@@ -4,15 +4,16 @@ import { ToastProvider } from "./components/Toast";
 import { Shell } from "./Shell";
 import { AccessGate } from "./pages/AccessGate";
 import { LoginPage } from "./pages/LoginPage";
-import { UsersPage } from "./pages/UsersPage";
+import { AnnouncementsPage } from "./pages/AnnouncementsPage";
+import { CaseStudiesPage } from "./pages/CaseStudiesPage";
+import { ClientsPage } from "./pages/ClientsPage";
 import { DashboardPage } from "./pages/DashboardPage";
+import { FeedbackPage } from "./pages/FeedbackPage";
+import { InsightsPage } from "./pages/InsightsPage";
 import { JobsPage } from "./pages/JobsPage";
 import { LocationsPage } from "./pages/LocationsPage";
 import { TeamPage } from "./pages/TeamPage";
-import { InsightsPage } from "./pages/InsightsPage";
-import { CaseStudiesPage } from "./pages/CaseStudiesPage";
-import { ClientsPage } from "./pages/ClientsPage";
-import { FeedbackPage } from "./pages/FeedbackPage";
+import { UsersPage } from "./pages/UsersPage";
 
 function Protected({ children }: { children: React.ReactNode }) {
   const { session, profile, profileError, loading } = useAuth();
@@ -51,6 +52,7 @@ export function App() {
                     <Route path="/case-studies" element={<CaseStudiesPage />} />
                     <Route path="/clients" element={<ClientsPage />} />
                     <Route path="/feedback" element={<FeedbackPage />} />
+                    <Route path="/announcements" element={<AnnouncementsPage />} />
                     <Route path="/users" element={<UsersPage />} />
                   </Routes>
                 </Shell>

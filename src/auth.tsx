@@ -20,6 +20,8 @@ export type Profile = {
   full_name: string | null;
   role: AccountRole;
   status: AccountStatus;
+  notify_email?: boolean;
+  notify_push?: boolean;
 };
 
 type AuthCtx = {
@@ -35,7 +37,7 @@ type AuthCtx = {
 
 const Ctx = createContext<AuthCtx | null>(null);
 
-const profileSelect = "id, email, full_name, role, status";
+const profileSelect = "id, email, full_name, role, status, notify_email, notify_push";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);

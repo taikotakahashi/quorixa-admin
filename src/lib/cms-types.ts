@@ -118,3 +118,19 @@ export type FeedbackRow = {
   sort_order: number;
   published: boolean;
 };
+
+/** Visitor-facing site updates (banners / news strips), not Insights articles. */
+export type AnnouncementTone = "info" | "highlight" | "urgent";
+
+export type AnnouncementRow = {
+  id: string;
+  title: string;
+  body: string;
+  link_label: string | null;
+  link_url: string | null;
+  tone: AnnouncementTone;
+  starts_at: string | null;
+  ends_at: string | null;
+  sort_order: number;
+  published: boolean;
+};
