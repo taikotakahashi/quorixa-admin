@@ -12,12 +12,13 @@ import { ImageField } from "../components/ImageField";
 import { PageHeader } from "../components/PageHeader";
 import { Pagination } from "../components/Pagination";
 import { SearchInput } from "../components/SearchInput";
-import { MetricCard, sparks } from "../components/MetricCard";
+import { MetricCard, metricTrends, sparks } from "../components/MetricCard";
 import { StatusBadge } from "../components/StatusBadge";
 import { useToast } from "../components/Toast";
 import { usePagination } from "../hooks/usePagination";
 import { useResourceList } from "../hooks/useResourceList";
 import { supabase } from "../lib/supabase";
+import teamBg from "../assets/team.png";
 
 type PersonDraft = {
   id?: string;
@@ -175,6 +176,7 @@ export function TeamPage() {
         accentWord="Team"
         description="People are Home, About, Leadership, and careers portraits."
         quote="Great people build amazing things."
+        background={teamBg}
         actions={
           <button
             type="button"
@@ -197,6 +199,7 @@ export function TeamPage() {
           tint="#ede9fe"
           color="#7c3aed"
           spark={sparks.a}
+          trend={metricTrends.a}
         />
         <MetricCard
           icon={<Users size={16} />}
@@ -208,7 +211,8 @@ export function TeamPage() {
           }
           tint="#ffedd5"
           color="#ea580c"
-          spark={sparks.c}
+          spark={sparks.b}
+          trend={metricTrends.b}
         />
         <MetricCard
           icon={<Crown size={16} />}
@@ -220,7 +224,8 @@ export function TeamPage() {
           }
           tint="#dcfce7"
           color="#16a34a"
-          spark={sparks.b}
+          spark={sparks.c}
+          trend={metricTrends.c}
         />
         <MetricCard
           icon={<MessageSquareQuote size={16} />}
@@ -231,6 +236,7 @@ export function TeamPage() {
           tint="#fce7f3"
           color="#db2777"
           spark={sparks.d}
+          trend={metricTrends.d}
         />
       </div>
 

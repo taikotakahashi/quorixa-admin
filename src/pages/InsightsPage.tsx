@@ -8,12 +8,13 @@ import { ImageField } from "../components/ImageField";
 import { PageHeader } from "../components/PageHeader";
 import { Pagination } from "../components/Pagination";
 import { SearchInput } from "../components/SearchInput";
-import { MetricCard, sparks } from "../components/MetricCard";
+import { MetricCard, metricTrends, sparks } from "../components/MetricCard";
 import { StatusBadge } from "../components/StatusBadge";
 import { useToast } from "../components/Toast";
 import { usePagination } from "../hooks/usePagination";
 import { useResourceList } from "../hooks/useResourceList";
 import { supabase } from "../lib/supabase";
+import insightsBg from "../assets/insights.png";
 
 function slugify(title: string) {
   return title
@@ -128,6 +129,7 @@ export function InsightsPage() {
         accentWord="Insights"
         description="Share ideas, stories, and updates across blog posts, articles, and news."
         quote="Great content builds great things."
+        background={insightsBg}
         actions={
           <button
             type="button"
@@ -153,6 +155,7 @@ export function InsightsPage() {
           tint="#ede9fe"
           color="#7c3aed"
           spark={sparks.a}
+          trend={metricTrends.a}
         />
         <MetricCard
           icon={<MapPin size={16} />}
@@ -161,6 +164,7 @@ export function InsightsPage() {
           tint="#dbeafe"
           color="#2563eb"
           spark={sparks.b}
+          trend={metricTrends.b}
         />
         <MetricCard
           icon={<FileText size={16} />}
@@ -169,6 +173,7 @@ export function InsightsPage() {
           tint="#ffedd5"
           color="#ea580c"
           spark={sparks.c}
+          trend={metricTrends.c}
         />
         <MetricCard
           icon={<Newspaper size={16} />}
@@ -177,6 +182,7 @@ export function InsightsPage() {
           tint="#fce7f3"
           color="#db2777"
           spark={sparks.d}
+          trend={metricTrends.d}
         />
       </div>
 

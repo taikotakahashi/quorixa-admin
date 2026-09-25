@@ -12,6 +12,7 @@ import { useToast } from "../components/Toast";
 import { usePagination } from "../hooks/usePagination";
 import { useResourceList } from "../hooks/useResourceList";
 import { supabase } from "../lib/supabase";
+import locationBg from "../assets/location.png";
 
 const empty = (): TalentLocationRow => ({
   id: "",
@@ -103,6 +104,7 @@ export function LocationsPage() {
         accentWord="Locations"
         description="Countries on the talent map. Map X/Y are percentages on the world map."
         quote="Talent everywhere we work."
+        background={locationBg}
         actions={
           <button
             type="button"

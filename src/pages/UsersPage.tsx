@@ -10,6 +10,7 @@ import { SearchInput } from "../components/SearchInput";
 import { useToast } from "../components/Toast";
 import { usePagination } from "../hooks/usePagination";
 import { supabase } from "../lib/supabase";
+import usersBg from "../assets/user.png";
 
 type ActionKind = "grant" | "revoke" | "disable" | "enable" | "delete";
 
@@ -149,6 +150,7 @@ export function UsersPage() {
         accentWord="Users"
         description="New email and Google registrations stay pending until you grant administrator access."
         quote="Approve the people who should run the studio."
+        background={usersBg}
       />
 
       <div className="panel">

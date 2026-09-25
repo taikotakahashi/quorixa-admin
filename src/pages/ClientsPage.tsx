@@ -13,6 +13,7 @@ import { useToast } from "../components/Toast";
 import { usePagination } from "../hooks/usePagination";
 import { useResourceList } from "../hooks/useResourceList";
 import { supabase } from "../lib/supabase";
+import clientsBg from "../assets/clients.png";
 
 function slugify(name: string) {
   return name
@@ -95,6 +96,7 @@ export function ClientsPage() {
         accentWord="Clients"
         description="Logo marquee brands on Home and About."
         quote="Brands that build with us."
+        background={clientsBg}
         actions={
           <button
             type="button"

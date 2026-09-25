@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode, CSSProperties } from "react";
 import { ChevronRight, Users, type LucideIcon } from "lucide-react";
 
 type Props = {
@@ -9,6 +9,7 @@ type Props = {
   quote?: string;
   actions?: ReactNode;
   accentWord?: string;
+  background?: string;
 };
 
 function TitleText({ title, accentWord }: { title: string; accentWord?: string }) {
@@ -85,9 +86,20 @@ export function PageHeader({
   quote,
   actions,
   accentWord,
+  background,
 }: Props) {
+  const style: CSSProperties | undefined = background
+    ? {
+        backgroundImage: `url(${background})`,
+        backgroundColor: "#f4f2fb",
+        backgroundPosition: "center",
+        backgroundSize: "100% 100%",
+        backgroundRepeat: "no-repeat",
+      }
+    : undefined;
+
   return (
-    <section className="studio-banner">
+    <section className={`studio-banner${background ? " has-photo" : ""}`} style={style}>
       <div className="studio-banner-copy">
         {kicker ? (
           <p className="studio-kicker">
@@ -101,8 +113,9 @@ export function PageHeader({
         {description ? <p className="studio-lead">{description}</p> : null}
       </div>
       <div className="studio-banner-art">
-        <BannerPeople />
-        {quote ? <p className="studio-quote">{quote}</p> : null}
+        {background ? null : <BannerPeople />}
+        {quote && !background ? <p className="studio-quote">{quote}</p> : null}
+        {quote && background ? <p className="studio-quote studio-quote-on-photo">{quote}</p> : null}
       </div>
       {actions ? (
         <div className="studio-banner-actions">

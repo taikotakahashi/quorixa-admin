@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../auth";
+import { MetricCard, metricTrends, sparks } from "../components/MetricCard";
 import liveArt from "../assets/dash-live-art.png";
 
 const cards = [
@@ -26,8 +27,8 @@ const cards = [
     icon: Briefcase,
     tint: "#ede9fe",
     color: "#7c3aed",
-    spark: "M1 16 C8 14, 12 6, 20 8 S32 18, 42 10 S52 4, 58 7",
-    trend: "+2 this month",
+    spark: sparks.a,
+    trend: metricTrends.a,
   },
   {
     key: "locations",
@@ -36,8 +37,8 @@ const cards = [
     icon: MapPin,
     tint: "#dbeafe",
     color: "#2563eb",
-    spark: "M1 14 C10 16, 16 8, 24 10 S36 18, 44 9 S54 6, 58 8",
-    trend: "+1 this month",
+    spark: sparks.b,
+    trend: metricTrends.b,
   },
   {
     key: "team",
@@ -46,8 +47,8 @@ const cards = [
     icon: Users,
     tint: "#ffedd5",
     color: "#ea580c",
-    spark: "M1 12 C9 10, 14 16, 22 12 S34 4, 42 8 S52 14, 58 11",
-    trend: "+3 this month",
+    spark: sparks.c,
+    trend: metricTrends.c,
   },
   {
     key: "insights",
@@ -56,8 +57,8 @@ const cards = [
     icon: FileText,
     tint: "#dcfce7",
     color: "#16a34a",
-    spark: "M1 15 C8 12, 14 7, 22 9 S34 16, 44 8 S54 5, 58 6",
-    trend: "+4 this month",
+    spark: sparks.d,
+    trend: metricTrends.d,
   },
   {
     key: "caseStudies",
@@ -66,8 +67,8 @@ const cards = [
     icon: FolderKanban,
     tint: "#fce7f3",
     color: "#db2777",
-    spark: "M1 13 C10 15, 16 9, 24 11 S36 17, 46 8 S54 6, 58 9",
-    trend: "+5 this month",
+    spark: sparks.a,
+    trend: metricTrends.a,
   },
   {
     key: "clients",
@@ -76,8 +77,8 @@ const cards = [
     icon: Building2,
     tint: "#ccfbf1",
     color: "#0d9488",
-    spark: "M1 16 C9 13, 15 8, 23 10 S35 18, 45 9 S54 7, 58 8",
-    trend: "+1 this month",
+    spark: sparks.b,
+    trend: metricTrends.b,
   },
 ] as const;
 
@@ -166,28 +167,16 @@ export function DashboardPage() {
 
       <div className="stats">
         {cards.map(({ key, label, to, icon: Icon, tint, color, spark, trend }) => (
-          <Link key={key} to={to} className="stat-card">
-            <div className="stat-top">
-              <div className="stat-label">
-                <span className="stat-icon" style={{ background: tint, color }}>
-                  <Icon size={15} strokeWidth={2.2} />
-                </span>
-                {label}
-              </div>
-            </div>
-            <strong>{loading ? "—" : counts[key]}</strong>
-            <div className="stat-foot">
-              <span className="stat-trend">↑ {trend}</span>
-              <svg className="spark" viewBox="0 0 60 22" fill="none" aria-hidden>
-                <path
-                  d={spark}
-                  stroke={color}
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  opacity="0.85"
-                />
-              </svg>
-            </div>
+          <Link key={key} to={to} className="metric-link">
+            <MetricCard
+              icon={<Icon size={16} strokeWidth={2.2} />}
+              label={label}
+              value={loading ? "—" : counts[key]}
+              tint={tint}
+              color={color}
+              spark={spark}
+              trend={trend}
+            />
           </Link>
         ))}
       </div>

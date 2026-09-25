@@ -21,7 +21,7 @@ import type { JobRow, JobType } from "../lib/cms-types";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Drawer } from "../components/Drawer";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";
-import { MetricCard, sparks } from "../components/MetricCard";
+import { MetricCard, metricTrends, sparks } from "../components/MetricCard";
 import { PageHeader } from "../components/PageHeader";
 import { Pagination } from "../components/Pagination";
 import { SearchInput } from "../components/SearchInput";
@@ -30,6 +30,7 @@ import { useToast } from "../components/Toast";
 import { usePagination } from "../hooks/usePagination";
 import { useResourceList } from "../hooks/useResourceList";
 import { supabase } from "../lib/supabase";
+import jobsBg from "../assets/job.png";
 
 type Draft = JobRow;
 
@@ -220,6 +221,7 @@ export function JobsPage() {
         accentWord="Jobs"
         description="Open roles shown on Careers. Link each job to a map location for accurate open-role counts."
         quote="Build great teams."
+        background={jobsBg}
         actions={
           <button type="button" className="btn btn-primary" onClick={openNew}>
             <Plus size={16} /> Add job <ChevronRight size={15} strokeWidth={2.4} />
@@ -235,6 +237,7 @@ export function JobsPage() {
           tint="#ede9fe"
           color="#7c3aed"
           spark={sparks.a}
+          trend={metricTrends.a}
         />
         <MetricCard
           icon={<Globe2 size={16} />}
@@ -243,6 +246,7 @@ export function JobsPage() {
           tint="#dcfce7"
           color="#16a34a"
           spark={sparks.b}
+          trend={metricTrends.b}
         />
         <MetricCard
           icon={<Pencil size={16} />}
@@ -251,6 +255,7 @@ export function JobsPage() {
           tint="#ffedd5"
           color="#ea580c"
           spark={sparks.c}
+          trend={metricTrends.c}
         />
         <MetricCard
           icon={<Users size={16} />}
@@ -259,6 +264,7 @@ export function JobsPage() {
           tint="#dbeafe"
           color="#2563eb"
           spark={sparks.d}
+          trend={metricTrends.d}
         />
       </div>
 

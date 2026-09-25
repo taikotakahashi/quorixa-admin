@@ -22,11 +22,12 @@ import { ImageField } from "../components/ImageField";
 import { PageHeader } from "../components/PageHeader";
 import { Pagination } from "../components/Pagination";
 import { SearchInput } from "../components/SearchInput";
-import { MetricCard, sparks } from "../components/MetricCard";
+import { MetricCard, metricTrends, sparks } from "../components/MetricCard";
 import { useToast } from "../components/Toast";
 import { usePagination } from "../hooks/usePagination";
 import { useResourceList } from "../hooks/useResourceList";
 import { supabase } from "../lib/supabase";
+import feedbackBg from "../assets/feedback.png";
 
 type Draft = Omit<FeedbackRow, "id"> & { id?: string };
 
@@ -171,6 +172,7 @@ export function FeedbackPage() {
         accentWord="Feedback"
         description="Review, edit, approve, or remove posts from team members, users, and clients."
         quote="Approve the voices that represent QUORIXA."
+        background={feedbackBg}
         actions={
           <button
             type="button"
@@ -193,6 +195,7 @@ export function FeedbackPage() {
           tint="#ede9fe"
           color="#7c3aed"
           spark={sparks.a}
+          trend={metricTrends.a}
         />
         <MetricCard
           icon={<Users size={16} />}
@@ -201,6 +204,7 @@ export function FeedbackPage() {
           tint="#fff7ed"
           color="#d97706"
           spark={sparks.b}
+          trend={metricTrends.b}
         />
         <MetricCard
           icon={<Check size={16} />}
@@ -209,6 +213,7 @@ export function FeedbackPage() {
           tint="#ecfdf5"
           color="#059669"
           spark={sparks.c}
+          trend={metricTrends.c}
         />
         <MetricCard
           icon={<Building2 size={16} />}
@@ -217,6 +222,7 @@ export function FeedbackPage() {
           tint="#eff6ff"
           color="#2563eb"
           spark={sparks.d}
+          trend={metricTrends.d}
         />
       </div>
 

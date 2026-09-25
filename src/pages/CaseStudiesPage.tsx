@@ -8,12 +8,13 @@ import { ImageField } from "../components/ImageField";
 import { PageHeader } from "../components/PageHeader";
 import { Pagination } from "../components/Pagination";
 import { SearchInput } from "../components/SearchInput";
-import { MetricCard, sparks } from "../components/MetricCard";
+import { MetricCard, metricTrends, sparks } from "../components/MetricCard";
 import { StatusBadge } from "../components/StatusBadge";
 import { useToast } from "../components/Toast";
 import { usePagination } from "../hooks/usePagination";
 import { useResourceList } from "../hooks/useResourceList";
 import { supabase } from "../lib/supabase";
+import studiesBg from "../assets/studie.png";
 
 function slugify(title: string) {
   return title
@@ -169,6 +170,7 @@ export function CaseStudiesPage() {
         accentWord="Studies"
         description="Portfolio cards and detail pages under Our Work."
         quote="Real work. Real impact. Greater possibilities."
+        background={studiesBg}
         actions={
           <button
             type="button"
@@ -195,6 +197,7 @@ export function CaseStudiesPage() {
           tint="#ede9fe"
           color="#7c3aed"
           spark={sparks.a}
+          trend={metricTrends.a}
         />
         <MetricCard
           icon={<Send size={16} />}
@@ -203,6 +206,7 @@ export function CaseStudiesPage() {
           tint="#dcfce7"
           color="#16a34a"
           spark={sparks.b}
+          trend={metricTrends.b}
         />
         <MetricCard
           icon={<Boxes size={16} />}
@@ -215,6 +219,7 @@ export function CaseStudiesPage() {
           tint="#ffedd5"
           color="#ea580c"
           spark={sparks.c}
+          trend={metricTrends.c}
         />
         <MetricCard
           icon={<Star size={16} />}
@@ -227,6 +232,7 @@ export function CaseStudiesPage() {
           tint="#fce7f3"
           color="#db2777"
           spark={sparks.d}
+          trend={metricTrends.d}
         />
       </div>
 
