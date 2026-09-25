@@ -1,9 +1,10 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { Pencil, Plus, Trash2, ChevronRight, Building2 } from "lucide-react";
+import { Pencil, Plus, Trash2, ChevronRight, Building2, Globe2, Users } from "lucide-react";
 import type { ClientRow } from "../lib/cms-types";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Drawer } from "../components/Drawer";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";
+import { HeroInlineStats } from "../components/HeroInlineStats";
 import { ImageField } from "../components/ImageField";
 import { PageHeader } from "../components/PageHeader";
 import { Pagination } from "../components/Pagination";
@@ -14,6 +15,10 @@ import { usePagination } from "../hooks/usePagination";
 import { useResourceList } from "../hooks/useResourceList";
 import { supabase } from "../lib/supabase";
 import clientsBg from "../assets/clients.png";
+
+function formatPlus(n: number) {
+  return `${n.toLocaleString("en-US")}+`;
+}
 
 function slugify(name: string) {
   return name
@@ -90,11 +95,11 @@ export function ClientsPage() {
   return (
     <div>
       <PageHeader
-        kicker="Clients"
-        kickerIcon={Building2}
+        kicker="Our Clients"
+        kickerIcon={Users}
         title="Our Clients"
         accentWord="Clients"
-        description="Logo marquee brands on Home and About."
+        description="Trusted by innovative companies and teams around the world. We're proud to work with amazing clients across industries."
         quote="Brands that build with us."
         background={clientsBg}
         actions={
@@ -109,6 +114,33 @@ export function ClientsPage() {
           >
             <Plus size={16} /> Add client <ChevronRight size={15} strokeWidth={2.4} />
           </button>
+        }
+        footer={
+          <HeroInlineStats
+            items={[
+              {
+                icon: <Building2 size={22} strokeWidth={2} />,
+                primary: loading ? "—" : formatPlus(rows.length),
+                secondary: "Happy Clients",
+                tint: "linear-gradient(145deg, #f3e8ff 0%, #e0e7ff 100%)",
+                color: "#6d28d9",
+              },
+              {
+                icon: <Globe2 size={22} strokeWidth={2} />,
+                primary: "20+",
+                secondary: "Countries",
+                tint: "linear-gradient(145deg, #fce7f3 0%, #fbcfe8 100%)",
+                color: "#db2777",
+              },
+              {
+                icon: <Users size={22} strokeWidth={2} />,
+                primary: "95%",
+                secondary: "Client Satisfaction",
+                tint: "linear-gradient(145deg, #dbeafe 0%, #e0f2fe 100%)",
+                color: "#2563eb",
+              },
+            ]}
+          />
         }
       />
 

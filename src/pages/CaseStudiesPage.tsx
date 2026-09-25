@@ -1,9 +1,10 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { Boxes, ChevronRight, ExternalLink, FolderKanban, Pencil, Plus, Send, Star, Trash2 } from "lucide-react";
+import { Boxes, ChartColumn, ChevronRight, ExternalLink, FolderKanban, Lightbulb, Pencil, Plus, Send, Star, Trash2, Users } from "lucide-react";
 import type { CaseStudyRow, CaseStudyTag } from "../lib/cms-types";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Drawer } from "../components/Drawer";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";
+import { HeroInlineStats } from "../components/HeroInlineStats";
 import { ImageField } from "../components/ImageField";
 import { PageHeader } from "../components/PageHeader";
 import { Pagination } from "../components/Pagination";
@@ -164,11 +165,11 @@ export function CaseStudiesPage() {
   return (
     <div>
       <PageHeader
-        kicker="Our work"
+        kicker="Case Studies"
         kickerIcon={FolderKanban}
         title="Case Studies"
         accentWord="Studies"
-        description="Portfolio cards and detail pages under Our Work."
+        description="Explore our work. Discover real projects, solutions, and the success stories we've helped bring to life."
         quote="Real work. Real impact. Greater possibilities."
         background={studiesBg}
         actions={
@@ -186,6 +187,33 @@ export function CaseStudiesPage() {
           >
             <Plus size={16} /> Add project <ChevronRight size={15} strokeWidth={2.4} />
           </button>
+        }
+        footer={
+          <HeroInlineStats
+            items={[
+              {
+                icon: <ChartColumn size={22} strokeWidth={2} />,
+                primary: "Real",
+                secondary: "Projects",
+                tint: "linear-gradient(145deg, #f3e8ff 0%, #e0e7ff 100%)",
+                color: "#6d28d9",
+              },
+              {
+                icon: <Lightbulb size={22} strokeWidth={2} />,
+                primary: "Practical",
+                secondary: "Solutions",
+                tint: "linear-gradient(145deg, #fce7f3 0%, #fbcfe8 100%)",
+                color: "#db2777",
+              },
+              {
+                icon: <Users size={22} strokeWidth={2} />,
+                primary: "Measurable",
+                secondary: "Results",
+                tint: "linear-gradient(145deg, #dbeafe 0%, #e0f2fe 100%)",
+                color: "#2563eb",
+              },
+            ]}
+          />
         }
       />
 

@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Shield, ShieldOff, Trash2, UserX, UserCheck } from "lucide-react";
+import { ChartColumn, Settings, Shield, ShieldOff, Trash2, UserX, UserCheck, Users } from "lucide-react";
 import type { AccountRole, AccountStatus, Profile } from "../auth";
 import { useAuth } from "../auth";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";
+import { HeroInlineStats } from "../components/HeroInlineStats";
 import { PageHeader } from "../components/PageHeader";
 import { Pagination } from "../components/Pagination";
 import { SearchInput } from "../components/SearchInput";
@@ -148,9 +149,36 @@ export function UsersPage() {
         kickerIcon={Shield}
         title="Studio Users"
         accentWord="Users"
-        description="New email and Google registrations stay pending until you grant administrator access."
+        description="Manage studio users, view their registration status, and grant or revoke administrator access."
         quote="Approve the people who should run the studio."
         background={usersBg}
+        footer={
+          <HeroInlineStats
+            items={[
+              {
+                icon: <Users size={20} strokeWidth={2} />,
+                primary: "User",
+                secondary: "Management",
+                tint: "linear-gradient(145deg, #f3e8ff 0%, #e0e7ff 100%)",
+                color: "#6d28d9",
+              },
+              {
+                icon: <Shield size={20} strokeWidth={2} />,
+                primary: "Access",
+                secondary: "Control",
+                tint: "linear-gradient(145deg, #fce7f3 0%, #fbcfe8 100%)",
+                color: "#db2777",
+              },
+              {
+                icon: <Settings size={20} strokeWidth={2} />,
+                primary: "Admin",
+                secondary: "Permissions",
+                tint: "linear-gradient(145deg, #ede9fe 0%, #ddd6fe 100%)",
+                color: "#7c3aed",
+              },
+            ]}
+          />
+        }
       />
 
       <div className="panel">

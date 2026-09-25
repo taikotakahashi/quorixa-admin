@@ -1,9 +1,10 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { ChevronRight, ExternalLink, FileText, MapPin, Newspaper, Pencil, Plus, Trash2 } from "lucide-react";
+import { ChevronRight, ExternalLink, FileText, Lightbulb, MapPin, Newspaper, Pencil, Plus, Trash2 } from "lucide-react";
 import type { InsightRow, InsightSection } from "../lib/cms-types";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Drawer } from "../components/Drawer";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";
+import { HeroInlineStats } from "../components/HeroInlineStats";
 import { ImageField } from "../components/ImageField";
 import { PageHeader } from "../components/PageHeader";
 import { Pagination } from "../components/Pagination";
@@ -127,7 +128,7 @@ export function InsightsPage() {
         kickerIcon={FileText}
         title="Our Insights"
         accentWord="Insights"
-        description="Share ideas, stories, and updates across blog posts, articles, and news."
+        description="Discover trends, data, and stories that help you make better decisions and drive growth."
         quote="Great content builds great things."
         background={insightsBg}
         actions={
@@ -144,6 +145,33 @@ export function InsightsPage() {
           >
             <Plus size={16} /> New post <ChevronRight size={15} strokeWidth={2.4} />
           </button>
+        }
+        footer={
+          <HeroInlineStats
+            items={[
+              {
+                icon: <FileText size={22} strokeWidth={2} />,
+                primary: "Latest",
+                secondary: "Trends",
+                tint: "linear-gradient(145deg, #f3e8ff 0%, #e0e7ff 100%)",
+                color: "#6d28d9",
+              },
+              {
+                icon: <Lightbulb size={22} strokeWidth={2} />,
+                primary: "Expert",
+                secondary: "Insights",
+                tint: "linear-gradient(145deg, #fce7f3 0%, #fbcfe8 100%)",
+                color: "#db2777",
+              },
+              {
+                icon: <Newspaper size={22} strokeWidth={2} />,
+                primary: "Actionable",
+                secondary: "Ideas",
+                tint: "linear-gradient(145deg, #dbeafe 0%, #e0f2fe 100%)",
+                color: "#2563eb",
+              },
+            ]}
+          />
         }
       />
 

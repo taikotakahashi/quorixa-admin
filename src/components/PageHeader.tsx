@@ -10,35 +10,48 @@ type Props = {
   actions?: ReactNode;
   accentWord?: string;
   background?: string;
+  footer?: ReactNode;
 };
 
 function TitleText({ title, accentWord }: { title: string; accentWord?: string }) {
-  const accent = accentWord?.trim();
-  if (accent) {
-    const lower = title.toLowerCase();
-    const accentLower = accent.toLowerCase();
-    const idx = lower.lastIndexOf(accentLower);
-    if (idx >= 0) {
-      const before = title.slice(0, idx).trimEnd();
-      const word = title.slice(idx, idx + accent.length);
-      const after = title.slice(idx + accent.length);
+  const renderLine = (line: string, key: number) => {
+    const accent = accentWord?.trim();
+    if (accent) {
+      const lower = line.toLowerCase();
+      const accentLower = accent.toLowerCase();
+      const idx = lower.lastIndexOf(accentLower);
+      if (idx >= 0) {
+        const before = line.slice(0, idx).trimEnd();
+        const word = line.slice(idx, idx + accent.length);
+        const after = line.slice(idx + accent.length);
+        return (
+          <span key={key} className="studio-title-line">
+            {before ? `${before} ` : null}
+            <span className="studio-title-accent">{word}</span>
+            {after}
+          </span>
+        );
+      }
+    }
+    const parts = line.trim().split(/\s+/);
+    if (parts.length < 2) {
       return (
-        <>
-          {before ? `${before} ` : null}
-          <span className="studio-title-accent">{word}</span>
-          {after}
-        </>
+        <span key={key} className="studio-title-line">
+          {line}
+        </span>
       );
     }
-  }
-  const parts = title.trim().split(/\s+/);
-  if (parts.length < 2) return <>{title}</>;
-  const last = parts.pop()!;
-  return (
-    <>
-      {parts.join(" ")} <span className="studio-title-accent">{last}</span>
-    </>
-  );
+    const last = parts.pop()!;
+    return (
+      <span key={key} className="studio-title-line">
+        {parts.join(" ")} <span className="studio-title-accent">{last}</span>
+      </span>
+    );
+  };
+
+  const lines = title.split("\n");
+  if (lines.length === 1) return <>{renderLine(lines[0], 0)}</>;
+  return <>{lines.map((line, i) => renderLine(line, i))}</>;
 }
 
 function BannerPeople() {
@@ -87,6 +100,7 @@ export function PageHeader({
   actions,
   accentWord,
   background,
+  footer,
 }: Props) {
   const style: CSSProperties | undefined = background
     ? {
@@ -99,7 +113,7 @@ export function PageHeader({
     : undefined;
 
   return (
-    <section className={`studio-banner${background ? " has-photo" : ""}`} style={style}>
+    <section className={`studio-banner${background ? " has-photo" : ""}${footer ? " has-footer" : ""}`} style={style}>
       <div className="studio-banner-copy">
         {kicker ? (
           <p className="studio-kicker">
@@ -111,6 +125,7 @@ export function PageHeader({
           <TitleText title={title} accentWord={accentWord} />
         </h1>
         {description ? <p className="studio-lead">{description}</p> : null}
+        {footer ? <div className="studio-banner-footer">{footer}</div> : null}
       </div>
       <div className="studio-banner-art">
         {background ? null : <BannerPeople />}

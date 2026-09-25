@@ -1,9 +1,10 @@
-import { useMemo, useState, type FormEvent } from "react";
-import { Pencil, Plus, Trash2, ChevronRight, MapPin } from "lucide-react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { Building2, Globe2, Pencil, Plus, Trash2, ChevronRight, MapPin, Users } from "lucide-react";
 import type { TalentLocationRow, TalentRegion } from "../lib/cms-types";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Drawer } from "../components/Drawer";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";
+import { HeroInlineStats } from "../components/HeroInlineStats";
 import { PageHeader } from "../components/PageHeader";
 import { Pagination } from "../components/Pagination";
 import { SearchInput } from "../components/SearchInput";
@@ -27,6 +28,10 @@ const empty = (): TalentLocationRow => ({
   published: true,
 });
 
+function formatPlus(n: number) {
+  return `${n.toLocaleString("en-US")}+`;
+}
+
 export function LocationsPage() {
   const { push } = useToast();
   const { rows, loading, error, reload } = useResourceList<TalentLocationRow>(
@@ -40,6 +45,17 @@ export function LocationsPage() {
   const [formError, setFormError] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [openJobs, setOpenJobs] = useState(0);
+
+  useEffect(() => {
+    void (async () => {
+      const { count } = await supabase
+        .from("jobs")
+        .select("*", { count: "exact", head: true })
+        .eq("published", true);
+      setOpenJobs(count ?? 0);
+    })();
+  }, [rows.length]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -98,11 +114,11 @@ export function LocationsPage() {
   return (
     <div>
       <PageHeader
-        kicker="Locations"
+        kicker="Job Locations"
         kickerIcon={MapPin}
         title="Our Locations"
         accentWord="Locations"
-        description="Countries on the talent map. Map X/Y are percentages on the world map."
+        description="Explore where opportunities are available. View job openings on the map and discover teams around the world."
         quote="Talent everywhere we work."
         background={locationBg}
         actions={
@@ -117,6 +133,33 @@ export function LocationsPage() {
           >
             <Plus size={16} /> Add location <ChevronRight size={15} strokeWidth={2.4} />
           </button>
+        }
+        footer={
+          <HeroInlineStats
+            items={[
+              {
+                icon: <Building2 size={22} strokeWidth={2} />,
+                primary: loading ? "—" : formatPlus(rows.length),
+                secondary: "Locations",
+                tint: "linear-gradient(145deg, #f3e8ff 0%, #e0e7ff 100%)",
+                color: "#6d28d9",
+              },
+              {
+                icon: <Users size={22} strokeWidth={2} />,
+                primary: loading ? "—" : formatPlus(openJobs),
+                secondary: "Open Positions",
+                tint: "linear-gradient(145deg, #fce7f3 0%, #fbcfe8 100%)",
+                color: "#db2777",
+              },
+              {
+                icon: <Globe2 size={22} strokeWidth={2} />,
+                primary: "Remote",
+                secondary: "Work Anywhere",
+                tint: "linear-gradient(145deg, #d1fae5 0%, #ccfbf1 100%)",
+                color: "#0d9488",
+              },
+            ]}
+          />
         }
       />
 

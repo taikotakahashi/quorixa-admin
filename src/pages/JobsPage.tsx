@@ -219,7 +219,7 @@ export function JobsPage() {
         kickerIcon={Briefcase}
         title="Open Jobs"
         accentWord="Jobs"
-        description="Open roles shown on Careers. Link each job to a map location for accurate open-role counts."
+        description="Discover open roles across our teams and locations. Find your next opportunity and help us build what's next."
         quote="Build great teams."
         background={jobsBg}
         actions={

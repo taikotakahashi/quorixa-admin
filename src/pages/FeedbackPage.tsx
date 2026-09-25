@@ -3,6 +3,7 @@ import {
   Building2,
   Check,
   ChevronRight,
+  Lightbulb,
   MessageSquareQuote,
   Pencil,
   Plus,
@@ -18,6 +19,7 @@ import type {
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Drawer } from "../components/Drawer";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";
+import { HeroInlineStats } from "../components/HeroInlineStats";
 import { ImageField } from "../components/ImageField";
 import { PageHeader } from "../components/PageHeader";
 import { Pagination } from "../components/Pagination";
@@ -166,11 +168,11 @@ export function FeedbackPage() {
   return (
     <div>
       <PageHeader
-        kicker="Community"
+        kicker="Our Feedback"
         kickerIcon={MessageSquareQuote}
-        title="Our Feedback"
+        title={"Our Team's\nFeedback"}
         accentWord="Feedback"
-        description="Review, edit, approve, or remove posts from team members, users, and clients."
+        description="Real feedback from our amazing team members. Hear their experiences, ideas, and what they love about working here."
         quote="Approve the voices that represent QUORIXA."
         background={feedbackBg}
         actions={
@@ -184,6 +186,33 @@ export function FeedbackPage() {
           >
             <Plus size={16} /> Add feedback <ChevronRight size={15} strokeWidth={2.4} />
           </button>
+        }
+        footer={
+          <HeroInlineStats
+            items={[
+              {
+                icon: <Users size={22} strokeWidth={2} />,
+                primary: "Team",
+                secondary: "Experiences",
+                tint: "linear-gradient(145deg, #f3e8ff 0%, #e0e7ff 100%)",
+                color: "#6d28d9",
+              },
+              {
+                icon: <Lightbulb size={22} strokeWidth={2} />,
+                primary: "Ideas &",
+                secondary: "Suggestions",
+                tint: "linear-gradient(145deg, #fce7f3 0%, #fbcfe8 100%)",
+                color: "#db2777",
+              },
+              {
+                icon: <MessageSquareQuote size={22} strokeWidth={2} />,
+                primary: "A Stronger",
+                secondary: "Team Together",
+                tint: "linear-gradient(145deg, #dbeafe 0%, #e0f2fe 100%)",
+                color: "#2563eb",
+              },
+            ]}
+          />
         }
       />
 

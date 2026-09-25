@@ -1,5 +1,5 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { Pencil, Plus, Trash2, Users, Crown, MessageSquareQuote, ChevronRight } from "lucide-react";
+import { Pencil, Plus, Trash2, Users, Crown, MessageSquareQuote, ChevronRight, Star, Globe2 } from "lucide-react";
 import type { TeamMemberRow } from "../lib/cms-types";
 import {
   parsePersonMeta,
@@ -8,6 +8,7 @@ import {
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Drawer } from "../components/Drawer";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";
+import { HeroInlineStats } from "../components/HeroInlineStats";
 import { ImageField } from "../components/ImageField";
 import { PageHeader } from "../components/PageHeader";
 import { Pagination } from "../components/Pagination";
@@ -171,10 +172,11 @@ export function TeamPage() {
   return (
     <div>
       <PageHeader
-        kicker="Team"
+        kicker="Our Team"
+        kickerIcon={Users}
         title="Our Team"
         accentWord="Team"
-        description="People are Home, About, Leadership, and careers portraits."
+        description="Meet the talented professionals driving innovation, creativity, and excellence across our global teams."
         quote="Great people build amazing things."
         background={teamBg}
         actions={
@@ -188,6 +190,33 @@ export function TeamPage() {
           >
             <Plus size={16} /> Add member <ChevronRight size={15} strokeWidth={2.4} />
           </button>
+        }
+        footer={
+          <HeroInlineStats
+            items={[
+              {
+                icon: <Users size={22} strokeWidth={2} />,
+                primary: "Talented",
+                secondary: "Professionals",
+                tint: "linear-gradient(145deg, #f3e8ff 0%, #e0e7ff 100%)",
+                color: "#6d28d9",
+              },
+              {
+                icon: <Star size={22} strokeWidth={2} />,
+                primary: "Diverse",
+                secondary: "Backgrounds",
+                tint: "linear-gradient(145deg, #fce7f3 0%, #fbcfe8 100%)",
+                color: "#db2777",
+              },
+              {
+                icon: <Globe2 size={22} strokeWidth={2} />,
+                primary: "Global",
+                secondary: "Collaboration",
+                tint: "linear-gradient(145deg, #dbeafe 0%, #e0e7ff 100%)",
+                color: "#2563eb",
+              },
+            ]}
+          />
         }
       />
 
