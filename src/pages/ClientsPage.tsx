@@ -1,14 +1,16 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2, ChevronRight, Building2 } from "lucide-react";
 import type { ClientRow } from "../lib/cms-types";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Drawer } from "../components/Drawer";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";
 import { ImageField } from "../components/ImageField";
 import { PageHeader } from "../components/PageHeader";
+import { Pagination } from "../components/Pagination";
 import { SearchInput } from "../components/SearchInput";
 import { StatusBadge } from "../components/StatusBadge";
 import { useToast } from "../components/Toast";
+import { usePagination } from "../hooks/usePagination";
 import { useResourceList } from "../hooks/useResourceList";
 import { supabase } from "../lib/supabase";
 
@@ -45,6 +47,9 @@ export function ClientsPage() {
     if (!q) return rows;
     return rows.filter((r) => r.name.toLowerCase().includes(q));
   }, [rows, query]);
+
+  const { page, setPage, pages, pageItems, rangeStart, rangeEnd, total } =
+    usePagination(filtered, 8, query);
 
   const save = async (e: FormEvent) => {
     e.preventDefault();
@@ -84,7 +89,10 @@ export function ClientsPage() {
   return (
     <div>
       <PageHeader
-        title="Clients"
+        kicker="Clients"
+        kickerIcon={Building2}
+        title="Our Clients"
+        accentWord="Clients"
         description="Logo marquee brands on Home and About."
         quote="Brands that build with us."
         actions={
@@ -97,7 +105,7 @@ export function ClientsPage() {
               setFormError(null);
             }}
           >
-            <Plus size={16} /> Add client
+            <Plus size={16} /> Add client <ChevronRight size={15} strokeWidth={2.4} />
           </button>
         }
       />
@@ -128,7 +136,7 @@ export function ClientsPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((row) => (
+                {pageItems.map((row) => (
                   <tr key={row.id}>
                     <td>
                       {row.logo_url ? (
@@ -178,6 +186,17 @@ export function ClientsPage() {
             </table>
           </div>
         )}
+        {!loading && !error && total > 0 ? (
+          <Pagination
+            page={page}
+            pages={pages}
+            total={total}
+            rangeStart={rangeStart}
+            rangeEnd={rangeEnd}
+            label="clients"
+            onPageChange={setPage}
+          />
+        ) : null}
       </div>
 
       <Drawer

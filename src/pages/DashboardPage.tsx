@@ -146,7 +146,9 @@ export function DashboardPage() {
       <section className="dash-hero">
         <div className="dash-hero-copy">
           <p className="dash-kicker">Welcome back, {name} 👋</p>
-          <h1>Content overview</h1>
+          <h1>
+            Content <span className="studio-title-accent">overview</span>
+          </h1>
           <p className="dash-hero-lead">
             Manage everything that powers careers, team pages, blog, and portfolios
             — without leaving code.
@@ -160,7 +162,6 @@ export function DashboardPage() {
             </a>
           </div>
         </div>
-        <div className="dash-hero-art" aria-hidden="true" />
       </section>
 
       <div className="stats">

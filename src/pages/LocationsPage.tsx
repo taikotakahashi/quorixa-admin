@@ -1,13 +1,15 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2, ChevronRight, MapPin } from "lucide-react";
 import type { TalentLocationRow, TalentRegion } from "../lib/cms-types";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Drawer } from "../components/Drawer";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";
 import { PageHeader } from "../components/PageHeader";
+import { Pagination } from "../components/Pagination";
 import { SearchInput } from "../components/SearchInput";
 import { StatusBadge } from "../components/StatusBadge";
 import { useToast } from "../components/Toast";
+import { usePagination } from "../hooks/usePagination";
 import { useResourceList } from "../hooks/useResourceList";
 import { supabase } from "../lib/supabase";
 
@@ -46,6 +48,9 @@ export function LocationsPage() {
       return `${r.name} ${r.id} ${r.region}`.toLowerCase().includes(q);
     });
   }, [rows, query, region]);
+
+  const { page, setPage, pages, pageItems, rangeStart, rangeEnd, total } =
+    usePagination(filtered, 8, `${query}|${region}`);
 
   const save = async (e: FormEvent) => {
     e.preventDefault();
@@ -92,8 +97,12 @@ export function LocationsPage() {
   return (
     <div>
       <PageHeader
-        title="Locations"
+        kicker="Locations"
+        kickerIcon={MapPin}
+        title="Our Locations"
+        accentWord="Locations"
         description="Countries on the talent map. Map X/Y are percentages on the world map."
+        quote="Talent everywhere we work."
         actions={
           <button
             type="button"
@@ -104,7 +113,7 @@ export function LocationsPage() {
               setFormError(null);
             }}
           >
-            <Plus size={16} /> Add location
+            <Plus size={16} /> Add location <ChevronRight size={15} strokeWidth={2.4} />
           </button>
         }
       />
@@ -148,7 +157,7 @@ export function LocationsPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((row) => (
+                {pageItems.map((row) => (
                   <tr key={row.id}>
                     <td>
                       <div className="cell-title">
@@ -192,6 +201,17 @@ export function LocationsPage() {
             </table>
           </div>
         )}
+        {!loading && !error && total > 0 ? (
+          <Pagination
+            page={page}
+            pages={pages}
+            total={total}
+            rangeStart={rangeStart}
+            rangeEnd={rangeEnd}
+            label="locations"
+            onPageChange={setPage}
+          />
+        ) : null}
       </div>
 
       <Drawer
@@ -299,7 +319,7 @@ export function LocationsPage() {
               style={{
                 position: "relative",
                 height: 160,
-                borderRadius: 12,
+                  borderRadius: 7,
                 background:
                   "linear-gradient(180deg,#e2e8f0,#f8fafc), repeating-linear-gradient(90deg,#cbd5e1 0 1px,transparent 1px 20px), repeating-linear-gradient(#cbd5e1 0 1px,transparent 1px 20px)",
                 border: "1px solid var(--border)",

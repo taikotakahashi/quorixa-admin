@@ -5,6 +5,7 @@ import {
   Briefcase,
   Building2,
   ChevronDown,
+  ChevronRight,
   Globe2,
   Info,
   Link2,
@@ -22,9 +23,11 @@ import { Drawer } from "../components/Drawer";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";
 import { MetricCard, sparks } from "../components/MetricCard";
 import { PageHeader } from "../components/PageHeader";
+import { Pagination } from "../components/Pagination";
 import { SearchInput } from "../components/SearchInput";
 import { StatusBadge } from "../components/StatusBadge";
 import { useToast } from "../components/Toast";
+import { usePagination } from "../hooks/usePagination";
 import { useResourceList } from "../hooks/useResourceList";
 import { supabase } from "../lib/supabase";
 
@@ -74,7 +77,6 @@ export function JobsPage() {
   const [dept, setDept] = useState("all");
   const [place, setPlace] = useState("all");
   const [kind, setKind] = useState("all");
-  const [page, setPage] = useState(0);
   const [sortAsc, setSortAsc] = useState(true);
   const [editing, setEditing] = useState<Draft | null>(null);
   const [isNew, setIsNew] = useState(false);
@@ -127,15 +129,19 @@ export function JobsPage() {
     () => [...new Set(rows.map((r) => r.location_label).filter(Boolean))].sort(),
     [rows],
   );
-  const pageSize = 6;
-  const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const pageRows = filtered.slice(page * pageSize, page * pageSize + pageSize);
-  const rangeStart = filtered.length ? page * pageSize + 1 : 0;
-  const rangeEnd = Math.min(filtered.length, page * pageSize + pageSize);
-
-  useEffect(() => {
-    setPage(0);
-  }, [query, status, dept, place, kind]);
+  const {
+    page,
+    setPage,
+    pages,
+    pageItems: pageRows,
+    rangeStart,
+    rangeEnd,
+    total,
+  } = usePagination(
+    filtered,
+    6,
+    `${query}|${status}|${dept}|${place}|${kind}|${sortAsc}`,
+  );
 
   useEffect(() => {
     if (loading) return;
@@ -208,12 +214,15 @@ export function JobsPage() {
   return (
     <div>
       <PageHeader
-        title="Jobs"
+        kicker="Jobs"
+        kickerIcon={Briefcase}
+        title="Open Jobs"
+        accentWord="Jobs"
         description="Open roles shown on Careers. Link each job to a map location for accurate open-role counts."
         quote="Build great teams."
         actions={
           <button type="button" className="btn btn-primary" onClick={openNew}>
-            <Plus size={16} /> Add job
+            <Plus size={16} /> Add job <ChevronRight size={15} strokeWidth={2.4} />
           </button>
         }
       />
@@ -416,35 +425,16 @@ export function JobsPage() {
             </table>
           </div>
         )}
-        {!loading && !error && filtered.length > 0 ? (
-          <div className="table-foot">
-            <span>
-              Showing {rangeStart}–{rangeEnd} of {filtered.length} jobs
-            </span>
-            <div className="pager">
-              <button type="button" className="chip" disabled={page === 0} onClick={() => setPage((p) => p - 1)}>
-                ‹
-              </button>
-              {Array.from({ length: pages }, (_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  className={`chip ${page === i ? "active" : ""}`}
-                  onClick={() => setPage(i)}
-                >
-                  {i + 1}
-                </button>
-              ))}
-              <button
-                type="button"
-                className="chip"
-                disabled={page >= pages - 1}
-                onClick={() => setPage((p) => p + 1)}
-              >
-                ›
-              </button>
-            </div>
-          </div>
+        {!loading && !error && total > 0 ? (
+          <Pagination
+            page={page}
+            pages={pages}
+            total={total}
+            rangeStart={rangeStart}
+            rangeEnd={rangeEnd}
+            label="jobs"
+            onPageChange={setPage}
+          />
         ) : null}
       </div>
 

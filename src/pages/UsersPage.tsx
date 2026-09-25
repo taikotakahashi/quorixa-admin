@@ -5,8 +5,10 @@ import { useAuth } from "../auth";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";
 import { PageHeader } from "../components/PageHeader";
+import { Pagination } from "../components/Pagination";
 import { SearchInput } from "../components/SearchInput";
 import { useToast } from "../components/Toast";
+import { usePagination } from "../hooks/usePagination";
 import { supabase } from "../lib/supabase";
 
 type ActionKind = "grant" | "revoke" | "disable" | "enable" | "delete";
@@ -93,6 +95,9 @@ export function UsersPage() {
     );
   }, [rows, query]);
 
+  const { page, setPage, pages, pageItems, rangeStart, rangeEnd, total } =
+    usePagination(filtered, 8, query);
+
   const run = async () => {
     if (!pending) return;
     setBusy(true);
@@ -139,7 +144,9 @@ export function UsersPage() {
     <div>
       <PageHeader
         kicker="Access"
-        title="Users"
+        kickerIcon={Shield}
+        title="Studio Users"
+        accentWord="Users"
         description="New email and Google registrations stay pending until you grant administrator access."
         quote="Approve the people who should run the studio."
       />
@@ -170,7 +177,7 @@ export function UsersPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((row) => {
+                {pageItems.map((row) => {
                   const mine = row.id === selfId;
                   return (
                     <tr key={row.id}>
@@ -240,6 +247,17 @@ export function UsersPage() {
             </table>
           </div>
         )}
+        {!loading && total > 0 ? (
+          <Pagination
+            page={page}
+            pages={pages}
+            total={total}
+            rangeStart={rangeStart}
+            rangeEnd={rangeEnd}
+            label="users"
+            onPageChange={setPage}
+          />
+        ) : null}
       </div>
 
       <ConfirmDialog

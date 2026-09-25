@@ -1,39 +1,106 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { Pencil, Plus, Trash2, Users, Crown, Code2, PenTool } from "lucide-react";
-import type { TeamMemberKind, TeamMemberRow } from "../lib/cms-types";
+import { Pencil, Plus, Trash2, Users, Crown, MessageSquareQuote, ChevronRight } from "lucide-react";
+import type { TeamMemberRow } from "../lib/cms-types";
+import {
+  parsePersonMeta,
+  serializePersonMeta,
+} from "../lib/personMeta";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Drawer } from "../components/Drawer";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";
 import { ImageField } from "../components/ImageField";
 import { PageHeader } from "../components/PageHeader";
+import { Pagination } from "../components/Pagination";
 import { SearchInput } from "../components/SearchInput";
 import { MetricCard, sparks } from "../components/MetricCard";
 import { StatusBadge } from "../components/StatusBadge";
 import { useToast } from "../components/Toast";
+import { usePagination } from "../hooks/usePagination";
 import { useResourceList } from "../hooks/useResourceList";
 import { supabase } from "../lib/supabase";
 
-type Draft = Omit<TeamMemberRow, "id"> & { id?: string };
+type PersonDraft = {
+  id?: string;
+  slug: string;
+  name: string;
+  region: string;
+  teamRole: string;
+  leadershipRole: string;
+  quote: string;
+  photo_url: string | null;
+  sort_order: number;
+  published: boolean;
+};
 
-const empty = (): Draft => ({
+type SurfaceFilter = "all" | "team" | "leadership" | "quote";
+
+const empty = (): PersonDraft => ({
   slug: "",
   name: "",
-  role: "",
-  bio: null,
-  region: null,
-  quote: null,
+  region: "",
+  teamRole: "",
+  leadershipRole: "",
+  quote: "",
   photo_url: null,
-  kind: "team",
   sort_order: 0,
   published: true,
 });
+
+function rowToDraft(row: TeamMemberRow): PersonDraft {
+  const meta = parsePersonMeta(row.bio);
+  const teamRole = row.kind === "team" ? row.role : "";
+  const leadershipRole =
+    meta.leadershipRole || (row.kind === "leadership" ? row.role : "");
+  return {
+    id: row.id,
+    slug: row.slug ?? "",
+    name: row.name,
+    region: row.region ?? "",
+    teamRole,
+    leadershipRole,
+    quote: row.quote ?? "",
+    photo_url: row.photo_url,
+    sort_order: row.sort_order,
+    published: row.published,
+  };
+}
+
+function draftToPayload(draft: PersonDraft) {
+  const teamRole = draft.teamRole.trim();
+  const leadershipRole = draft.leadershipRole.trim();
+  const quote = draft.quote.trim();
+  return {
+    slug: draft.slug.trim() || null,
+    name: draft.name.trim(),
+    role: teamRole || leadershipRole || "",
+    region: draft.region.trim() || null,
+    quote: quote || null,
+    photo_url: draft.photo_url,
+    kind: (teamRole ? "team" : "leadership") as "team" | "leadership",
+    bio: serializePersonMeta({
+      leadershipRole: leadershipRole || undefined,
+      bioText: "",
+    }),
+    sort_order: draft.sort_order,
+    published: draft.published,
+  };
+}
+
+function surfaces(row: TeamMemberRow): string {
+  const d = rowToDraft(row);
+  const parts: string[] = [];
+  if (d.teamRole) parts.push("Team");
+  if (d.leadershipRole) parts.push("Leadership");
+  if (d.quote) parts.push("Feedback");
+  return parts.join(" · ") || "—";
+}
 
 export function TeamPage() {
   const { push } = useToast();
   const { rows, loading, error, reload } = useResourceList<TeamMemberRow>("team_members");
   const [query, setQuery] = useState("");
-  const [kind, setKind] = useState<"all" | TeamMemberKind>("all");
-  const [editing, setEditing] = useState<Draft | null>(null);
+  const [surface, setSurface] = useState<SurfaceFilter>("all");
+  const [editing, setEditing] = useState<PersonDraft | null>(null);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -42,24 +109,37 @@ export function TeamPage() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return rows.filter((r) => {
-      if (kind !== "all" && r.kind !== kind) return false;
+      const d = rowToDraft(r);
+      if (surface === "team" && !d.teamRole) return false;
+      if (surface === "leadership" && !d.leadershipRole) return false;
+      if (surface === "quote" && !d.quote) return false;
       if (!q) return true;
-      return `${r.name} ${r.role} ${r.region ?? ""} ${r.kind}`.toLowerCase().includes(q);
+      return `${d.name} ${d.teamRole} ${d.leadershipRole} ${d.region} ${d.quote}`
+        .toLowerCase()
+        .includes(q);
     });
-  }, [rows, query, kind]);
+  }, [rows, query, surface]);
+
+  const {
+    page,
+    setPage,
+    pages,
+    pageItems,
+    rangeStart,
+    rangeEnd,
+    total,
+  } = usePagination(filtered, 8, `${query}|${surface}`);
 
   const save = async (e: FormEvent) => {
     e.preventDefault();
     if (!editing) return;
+    if (!editing.teamRole.trim() && !editing.leadershipRole.trim()) {
+      setFormError("Add at least a team role or a leadership role.");
+      return;
+    }
     setSaving(true);
     setFormError(null);
-    const payload = {
-      ...editing,
-      slug: editing.slug || null,
-      bio: editing.bio || null,
-      region: editing.region || null,
-      quote: editing.quote || null,
-    };
+    const payload = draftToPayload(editing);
     const { error: err } = editing.id
       ? await supabase.from("team_members").update(payload).eq("id", editing.id)
       : await supabase.from("team_members").insert(payload);
@@ -68,7 +148,7 @@ export function TeamPage() {
       setFormError(err.message);
       return;
     }
-    push(editing.id ? "Member saved" : "Member added");
+    push(editing.id ? "Person saved" : "Person added");
     setEditing(null);
     await reload();
   };
@@ -82,7 +162,7 @@ export function TeamPage() {
       push(err.message, "err");
       return;
     }
-    push("Member deleted");
+    push("Person deleted");
     setDeleteId(null);
     await reload();
   };
@@ -90,7 +170,9 @@ export function TeamPage() {
   return (
     <div>
       <PageHeader
-        title="Team"
+        kicker="Team"
+        title="Our Team"
+        accentWord="Team"
         description="People are Home, About, Leadership, and careers portraits."
         quote="Great people build amazing things."
         actions={
@@ -102,7 +184,7 @@ export function TeamPage() {
               setFormError(null);
             }}
           >
-            <Plus size={16} /> Add member
+            <Plus size={16} /> Add member <ChevronRight size={15} strokeWidth={2.4} />
           </button>
         }
       />
@@ -110,32 +192,42 @@ export function TeamPage() {
       <div className="metric-row metric-row-4">
         <MetricCard
           icon={<Users size={16} />}
-          label="Total members"
+          label="People"
           value={loading ? "—" : rows.length}
           tint="#ede9fe"
           color="#7c3aed"
           spark={sparks.a}
         />
         <MetricCard
-          icon={<Crown size={16} />}
-          label="Leaders"
-          value={loading ? "—" : rows.filter((r) => r.kind === "leadership").length}
-          tint="#dcfce7"
-          color="#16a34a"
-          spark={sparks.b}
-        />
-        <MetricCard
-          icon={<Code2 size={16} />}
-          label="Engineers"
-          value={loading ? "—" : rows.filter((r) => /engineer/i.test(r.role)).length}
+          icon={<Users size={16} />}
+          label="On team grid"
+          value={
+            loading
+              ? "—"
+              : rows.filter((r) => rowToDraft(r).teamRole).length
+          }
           tint="#ffedd5"
           color="#ea580c"
           spark={sparks.c}
         />
         <MetricCard
-          icon={<PenTool size={16} />}
-          label="Designers"
-          value={loading ? "—" : rows.filter((r) => /design/i.test(r.role)).length}
+          icon={<Crown size={16} />}
+          label="Leadership"
+          value={
+            loading
+              ? "—"
+              : rows.filter((r) => rowToDraft(r).leadershipRole).length
+          }
+          tint="#dcfce7"
+          color="#16a34a"
+          spark={sparks.b}
+        />
+        <MetricCard
+          icon={<MessageSquareQuote size={16} />}
+          label="With feedback"
+          value={
+            loading ? "—" : rows.filter((r) => rowToDraft(r).quote).length
+          }
           tint="#fce7f3"
           color="#db2777"
           spark={sparks.d}
@@ -146,14 +238,21 @@ export function TeamPage() {
         <div className="table-tools">
           <SearchInput value={query} onChange={setQuery} placeholder="Search people…" />
           <div className="filters">
-            {(["all", "team", "leadership", "testimonial"] as const).map((k) => (
+            {(
+              [
+                ["all", "All"],
+                ["team", "Team"],
+                ["leadership", "Leadership"],
+                ["quote", "Feedback"],
+              ] as const
+            ).map(([k, label]) => (
               <button
                 key={k}
                 type="button"
-                className={`chip ${kind === k ? "active" : ""}`}
-                onClick={() => setKind(k)}
+                className={`chip ${surface === k ? "active" : ""}`}
+                onClick={() => setSurface(k)}
               >
-                {k === "all" ? "All" : k}
+                {label}
               </button>
             ))}
           </div>
@@ -166,7 +265,7 @@ export function TeamPage() {
             <p className="error">{error}</p>
           </div>
         ) : filtered.length === 0 ? (
-          <EmptyState title="No people found" description="Add team, leadership, or testimonials." />
+          <EmptyState title="No people found" description="Add a person with team and/or leadership roles." />
         ) : (
           <div className="table-wrap">
             <table className="data">
@@ -174,63 +273,84 @@ export function TeamPage() {
                 <tr>
                   <th />
                   <th>Name</th>
-                  <th>Kind</th>
-                  <th>Role</th>
+                  <th>Surfaces</th>
+                  <th>Roles</th>
                   <th>Status</th>
                   <th />
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((row) => (
-                  <tr key={row.id}>
-                    <td>
-                      {row.photo_url ? (
-                        <img src={row.photo_url} alt="" className="thumb" />
-                      ) : (
-                        <div className="thumb" />
-                      )}
-                    </td>
-                    <td>
-                      <div className="cell-title">{row.name}</div>
-                      <div className="cell-sub">{row.region || "—"}</div>
-                    </td>
-                    <td style={{ textTransform: "capitalize" }}>{row.kind}</td>
-                    <td>{row.role}</td>
-                    <td>
-                      <StatusBadge published={row.published} />
-                    </td>
-                    <td>
-                      <div className="row-actions">
-                        <button
-                          type="button"
-                          className="btn btn-sm"
-                          onClick={() => {
-                            setEditing(row);
-                            setFormError(null);
-                          }}
-                        >
-                          <Pencil size={14} /> Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-danger"
-                          onClick={() => setDeleteId(row.id)}
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                {pageItems.map((row) => {
+                  const d = rowToDraft(row);
+                  return (
+                    <tr key={row.id}>
+                      <td>
+                        {row.photo_url ? (
+                          <img src={row.photo_url} alt="" className="thumb" />
+                        ) : (
+                          <div className="thumb" />
+                        )}
+                      </td>
+                      <td>
+                        <div className="cell-title">{row.name}</div>
+                        <div className="cell-sub">{row.region || "—"}</div>
+                      </td>
+                      <td>{surfaces(row)}</td>
+                      <td>
+                        <div className="cell-title" style={{ fontWeight: 500 }}>
+                          {d.teamRole || d.leadershipRole || "—"}
+                        </div>
+                        {d.teamRole && d.leadershipRole ? (
+                          <div className="cell-sub">{d.leadershipRole}</div>
+                        ) : null}
+                      </td>
+                      <td>
+                        <StatusBadge published={row.published} />
+                      </td>
+                      <td>
+                        <div className="row-actions">
+                          <button
+                            type="button"
+                            className="btn btn-sm"
+                            onClick={() => {
+                              setEditing(rowToDraft(row));
+                              setFormError(null);
+                            }}
+                          >
+                            <Pencil size={14} /> Edit
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-danger"
+                            onClick={() => setDeleteId(row.id)}
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
         )}
+        {!loading && !error && total > 0 ? (
+          <Pagination
+            page={page}
+            pages={pages}
+            total={total}
+            rangeStart={rangeStart}
+            rangeEnd={rangeEnd}
+            label="people"
+            onPageChange={setPage}
+          />
+        ) : null}
       </div>
 
       <Drawer
         open={!!editing}
-        title={editing?.id ? "Edit member" : "New member"}
+        title={editing?.id ? "Edit person" : "New person"}
         onClose={() => !saving && setEditing(null)}
         footer={
           <>
@@ -247,28 +367,6 @@ export function TeamPage() {
       >
         {editing && (
           <form id="team-form" onSubmit={(e) => void save(e)} style={{ display: "contents" }}>
-            <div className="field-row">
-              <label className="field">
-                <span>Kind</span>
-                <select
-                  value={editing.kind}
-                  onChange={(e) =>
-                    setEditing({ ...editing, kind: e.target.value as TeamMemberKind })
-                  }
-                >
-                  <option value="team">Team</option>
-                  <option value="leadership">Leadership</option>
-                  <option value="testimonial">Testimonial</option>
-                </select>
-              </label>
-              <label className="field">
-                <span>Slug</span>
-                <input
-                  value={editing.slug ?? ""}
-                  onChange={(e) => setEditing({ ...editing, slug: e.target.value })}
-                />
-              </label>
-            </div>
             <label className="field">
               <span>Name</span>
               <input
@@ -277,41 +375,52 @@ export function TeamPage() {
                 required
               />
             </label>
-            <label className="field">
-              <span>Role / title</span>
-              <input
-                value={editing.role}
-                onChange={(e) => setEditing({ ...editing, role: e.target.value })}
-              />
-            </label>
-            <label className="field">
-              <span>Region / location</span>
-              <input
-                value={editing.region ?? ""}
-                onChange={(e) => setEditing({ ...editing, region: e.target.value })}
-              />
-            </label>
-            <label className="field">
-              <span>Bio</span>
-              <textarea
-                value={editing.bio ?? ""}
-                onChange={(e) => setEditing({ ...editing, bio: e.target.value })}
-              />
-            </label>
-            {editing.kind === "testimonial" && (
+            <div className="field-row">
               <label className="field">
-                <span>Quote</span>
-                <textarea
-                  value={editing.quote ?? ""}
-                  onChange={(e) => setEditing({ ...editing, quote: e.target.value })}
+                <span>Slug</span>
+                <input
+                  value={editing.slug}
+                  onChange={(e) => setEditing({ ...editing, slug: e.target.value })}
+                  placeholder="amelia-chen"
                 />
               </label>
-            )}
+              <label className="field">
+                <span>Region / location</span>
+                <input
+                  value={editing.region}
+                  onChange={(e) => setEditing({ ...editing, region: e.target.value })}
+                />
+              </label>
+            </div>
+            <label className="field">
+              <span>Team role</span>
+              <input
+                value={editing.teamRole}
+                onChange={(e) => setEditing({ ...editing, teamRole: e.target.value })}
+                placeholder="Engineering Director"
+              />
+            </label>
+            <label className="field">
+              <span>Leadership title</span>
+              <input
+                value={editing.leadershipRole}
+                onChange={(e) => setEditing({ ...editing, leadershipRole: e.target.value })}
+                placeholder="CEO"
+              />
+            </label>
+            <label className="field">
+              <span>Feedback quote</span>
+              <textarea
+                value={editing.quote}
+                onChange={(e) => setEditing({ ...editing, quote: e.target.value })}
+                placeholder="Optional — shown on About culture"
+              />
+            </label>
             <ImageField
               bucket="team"
               value={editing.photo_url}
               onChange={(url) => setEditing({ ...editing, photo_url: url })}
-              label="Photo"
+              label="Photo (one per person)"
             />
             <label className="check-row">
               <input
@@ -328,8 +437,9 @@ export function TeamPage() {
 
       <ConfirmDialog
         open={!!deleteId}
-        title="Delete member?"
-        message="They will disappear from team, leadership, and testimonial sections."
+        title="Delete this person?"
+        message="Their team, leadership, and feedback appearances will be removed."
+        confirmLabel={deleting ? "Deleting…" : "Delete"}
         busy={deleting}
         onCancel={() => setDeleteId(null)}
         onConfirm={() => void confirmDelete()}

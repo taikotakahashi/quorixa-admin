@@ -12,6 +12,7 @@ import { TeamPage } from "./pages/TeamPage";
 import { InsightsPage } from "./pages/InsightsPage";
 import { CaseStudiesPage } from "./pages/CaseStudiesPage";
 import { ClientsPage } from "./pages/ClientsPage";
+import { FeedbackPage } from "./pages/FeedbackPage";
 
 function Protected({ children }: { children: React.ReactNode }) {
   const { session, profile, profileError, loading } = useAuth();
@@ -49,6 +50,7 @@ export function App() {
                     <Route path="/insights" element={<InsightsPage />} />
                     <Route path="/case-studies" element={<CaseStudiesPage />} />
                     <Route path="/clients" element={<ClientsPage />} />
+                    <Route path="/feedback" element={<FeedbackPage />} />
                     <Route path="/users" element={<UsersPage />} />
                   </Routes>
                 </Shell>

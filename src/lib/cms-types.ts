@@ -17,6 +17,7 @@ export type TalentLocationRow = {
 
 export type TeamMemberKind = "team" | "leadership" | "testimonial";
 
+/** One row = one person. Legacy kind/role still present; leadership may be in bio meta. */
 export type TeamMemberRow = {
   id: string;
   slug: string | null;
@@ -27,6 +28,8 @@ export type TeamMemberRow = {
   quote: string | null;
   photo_url: string | null;
   kind: TeamMemberKind;
+  team_role?: string | null;
+  leadership_role?: string | null;
   sort_order: number;
   published: boolean;
 };
@@ -96,6 +99,22 @@ export type ClientRow = {
   name: string;
   logo_url: string | null;
   url: string | null;
+  sort_order: number;
+  published: boolean;
+};
+
+export type FeedbackAuthorType = "team" | "user" | "client";
+export type FeedbackStatus = "pending" | "approved" | "rejected";
+
+export type FeedbackRow = {
+  id: string;
+  author_name: string;
+  author_role: string;
+  author_type: FeedbackAuthorType;
+  quote: string;
+  location: string | null;
+  photo_url: string | null;
+  status: FeedbackStatus;
   sort_order: number;
   published: boolean;
 };

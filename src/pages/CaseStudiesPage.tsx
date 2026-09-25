@@ -1,15 +1,17 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { Boxes, ExternalLink, Pencil, Plus, Send, Star, Trash2 } from "lucide-react";
+import { Boxes, ChevronRight, ExternalLink, FolderKanban, Pencil, Plus, Send, Star, Trash2 } from "lucide-react";
 import type { CaseStudyRow, CaseStudyTag } from "../lib/cms-types";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Drawer } from "../components/Drawer";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";
 import { ImageField } from "../components/ImageField";
 import { PageHeader } from "../components/PageHeader";
+import { Pagination } from "../components/Pagination";
 import { SearchInput } from "../components/SearchInput";
 import { MetricCard, sparks } from "../components/MetricCard";
 import { StatusBadge } from "../components/StatusBadge";
 import { useToast } from "../components/Toast";
+import { usePagination } from "../hooks/usePagination";
 import { useResourceList } from "../hooks/useResourceList";
 import { supabase } from "../lib/supabase";
 
@@ -68,6 +70,9 @@ export function CaseStudiesPage() {
       `${r.title} ${r.industry ?? ""} ${r.result ?? ""}`.toLowerCase().includes(q),
     );
   }, [rows, query]);
+
+  const { page, setPage, pages, pageItems, rangeStart, rangeEnd, total } =
+    usePagination(filtered, 8, query);
 
   const openEdit = async (row: CaseStudyRow) => {
     setIsNew(false);
@@ -159,7 +164,9 @@ export function CaseStudiesPage() {
     <div>
       <PageHeader
         kicker="Our work"
-        title="Case studies"
+        kickerIcon={FolderKanban}
+        title="Case Studies"
+        accentWord="Studies"
         description="Portfolio cards and detail pages under Our Work."
         quote="Real work. Real impact. Greater possibilities."
         actions={
@@ -175,7 +182,7 @@ export function CaseStudiesPage() {
               setFormError(null);
             }}
           >
-            <Plus size={16} /> Add project
+            <Plus size={16} /> Add project <ChevronRight size={15} strokeWidth={2.4} />
           </button>
         }
       />
@@ -249,7 +256,7 @@ export function CaseStudiesPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((row) => (
+                {pageItems.map((row) => (
                   <tr key={row.id}>
                     <td>
                       {row.image_url ? (
@@ -298,6 +305,17 @@ export function CaseStudiesPage() {
             </table>
           </div>
         )}
+        {!loading && !error && total > 0 ? (
+          <Pagination
+            page={page}
+            pages={pages}
+            total={total}
+            rangeStart={rangeStart}
+            rangeEnd={rangeEnd}
+            label="case studies"
+            onPageChange={setPage}
+          />
+        ) : null}
       </div>
 
       <Drawer

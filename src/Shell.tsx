@@ -13,6 +13,7 @@ import {
   LogOut,
   MapPin,
   Menu,
+  MessageSquareQuote,
   Search,
   Settings,
   Shield,
@@ -20,6 +21,7 @@ import {
   X,
 } from "lucide-react";
 import { useAuth } from "./auth";
+import sidebarLogo from "./assets/uorixa-logo.png";
 
 const links = [
   { to: "/", label: "Dashboard", end: true, icon: LayoutDashboard },
@@ -29,6 +31,7 @@ const links = [
   { to: "/insights", label: "Insights", icon: FileText },
   { to: "/case-studies", label: "Case studies", icon: FolderKanban },
   { to: "/clients", label: "Clients", icon: Building2 },
+  { to: "/feedback", label: "Feedback", icon: MessageSquareQuote },
   { to: "/users", label: "Users", icon: Shield },
 ];
 
@@ -37,28 +40,6 @@ function displayName(email: string) {
   const first = local.split(/[._-]/)[0] ?? "";
   if (!first) return "Admin";
   return first.charAt(0).toUpperCase() + first.slice(1);
-}
-
-function BrandMark() {
-  return (
-    <svg width="34" height="34" viewBox="0 0 64 64" aria-hidden="true">
-      <defs>
-        <linearGradient id="shellMark" x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#ff4f9a" />
-          <stop offset="18%" stopColor="#ff7a32" />
-          <stop offset="42%" stopColor="#e879f9" />
-          <stop offset="64%" stopColor="#8b5cf6" />
-          <stop offset="82%" stopColor="#4f46e5" />
-          <stop offset="100%" stopColor="#22d3ee" />
-        </linearGradient>
-      </defs>
-      <path
-        fill="url(#shellMark)"
-        fillRule="evenodd"
-        d="M32 3.5 56.5 17.2 56.5 46.8 32 60.5 7.5 46.8 7.5 17.2Z M32 17.2 44.2 24.1 44.2 39.9 32 46.8 19.8 39.9 19.8 24.1Z"
-      />
-    </svg>
-  );
 }
 
 export function Shell({ children }: { children: ReactNode }) {
@@ -83,11 +64,7 @@ export function Shell({ children }: { children: ReactNode }) {
     <div className="layout">
       <aside className={`sidebar ${open ? "open" : ""}`}>
         <div className="brand">
-          <BrandMark />
-          <div className="brand-copy">
-            <strong>UORIXA</strong>
-            <span>WORK SMARTER TOGETHER</span>
-          </div>
+          <img src={sidebarLogo} alt="UORIXA" className="brand-logo-full" />
         </div>
 
         <div className="nav-label">Manage</div>

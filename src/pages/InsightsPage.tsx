@@ -1,15 +1,17 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { ExternalLink, FileText, MapPin, Newspaper, Pencil, Plus, Trash2 } from "lucide-react";
+import { ChevronRight, ExternalLink, FileText, MapPin, Newspaper, Pencil, Plus, Trash2 } from "lucide-react";
 import type { InsightRow, InsightSection } from "../lib/cms-types";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Drawer } from "../components/Drawer";
 import { EmptyState, TableSkeleton } from "../components/EmptyState";
 import { ImageField } from "../components/ImageField";
 import { PageHeader } from "../components/PageHeader";
+import { Pagination } from "../components/Pagination";
 import { SearchInput } from "../components/SearchInput";
 import { MetricCard, sparks } from "../components/MetricCard";
 import { StatusBadge } from "../components/StatusBadge";
 import { useToast } from "../components/Toast";
+import { usePagination } from "../hooks/usePagination";
 import { useResourceList } from "../hooks/useResourceList";
 import { supabase } from "../lib/supabase";
 
@@ -61,6 +63,9 @@ export function InsightsPage() {
         .includes(q);
     });
   }, [rows, query, section]);
+
+  const { page, setPage, pages, pageItems, rangeStart, rangeEnd, total } =
+    usePagination(filtered, 8, `${query}|${section}`);
 
   const openEdit = (row: InsightRow) => {
     setIsNew(false);
@@ -118,8 +123,10 @@ export function InsightsPage() {
     <div>
       <PageHeader
         kicker="Insights"
-        title="Blog posts and news on insights."
-        description="Share ideas, stories, and updates. Manage your blog posts, articles, and news to keep your audience informed and inspired."
+        kickerIcon={FileText}
+        title="Our Insights"
+        accentWord="Insights"
+        description="Share ideas, stories, and updates across blog posts, articles, and news."
         quote="Great content builds great things."
         actions={
           <button
@@ -133,7 +140,7 @@ export function InsightsPage() {
               setFormError(null);
             }}
           >
-            <Plus size={16} /> New post
+            <Plus size={16} /> New post <ChevronRight size={15} strokeWidth={2.4} />
           </button>
         }
       />
@@ -211,7 +218,7 @@ export function InsightsPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((row) => (
+                {pageItems.map((row) => (
                   <tr key={row.id}>
                     <td>
                       <div className="cell-title">{row.title}</div>
@@ -250,6 +257,17 @@ export function InsightsPage() {
             </table>
           </div>
         )}
+        {!loading && !error && total > 0 ? (
+          <Pagination
+            page={page}
+            pages={pages}
+            total={total}
+            rangeStart={rangeStart}
+            rangeEnd={rangeEnd}
+            label="posts"
+            onPageChange={setPage}
+          />
+        ) : null}
       </div>
 
       <Drawer
