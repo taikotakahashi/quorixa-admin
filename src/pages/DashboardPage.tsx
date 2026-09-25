@@ -83,7 +83,7 @@ const cards = [
   },
   {
     key: "announcements",
-    label: "Announcements",
+    label: "News",
     to: "/announcements",
     icon: Megaphone,
     tint: "#fce7f3",

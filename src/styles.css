@@ -1770,9 +1770,36 @@ table.data tr:last-child td {
 
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 18px;
+}
+
+.stats .metric-card {
+  padding: 16px 10px 14px 12px;
+  gap: 6px;
+}
+
+.stats .metric-card .spark {
+  width: 48px;
+  height: 28px;
+}
+
+.stats .metric-label {
+  letter-spacing: 0.04em;
+  font-size: 10px;
+}
+
+.stats .metric-card strong {
+  font-size: 26px;
+}
+
+.stats .metric-trend {
+  font-size: 11px;
+}
+
+.stats .metric-trend-muted {
+  display: none;
 }
 
 .dash-grid {
@@ -2216,7 +2243,9 @@ table.data tr:last-child td {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #6b6578;
-  line-height: 1.2;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .metric-card strong {
