@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ChartColumn, Settings, Shield, ShieldOff, Trash2, UserX, UserCheck, Users } from "lucide-react";
+import { Settings, Shield, ShieldOff, Trash2, UserX, UserCheck, Users } from "lucide-react";
 import type { AccountRole, AccountStatus, Profile } from "../auth";
 import { useAuth } from "../auth";
 import { ConfirmDialog } from "../components/ConfirmDialog";
