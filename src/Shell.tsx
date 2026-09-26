@@ -36,29 +36,18 @@ const links = [
   { to: "/users", label: "Users", icon: Shield },
 ];
 
-function displayName(email: string) {
-  const local = email.split("@")[0] ?? "";
-  const first = local.split(/[._-]/)[0] ?? "";
-  if (!first) return "Admin";
-  return first.charAt(0).toUpperCase() + first.slice(1);
-}
-
 export function Shell({ children }: { children: ReactNode }) {
-  const { signOut, session, profile } = useAuth();
+  const { signOut} = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [shortcut, setShortcut] = useState("Ctrl K");
-  const email = session?.user.email ?? "";
-  const name = displayName(email);
-  const initial = name.slice(0, 1).toUpperCase() || "A";
   const crumb =
     links.find((l) =>
       l.end ? location.pathname === "/" : location.pathname.startsWith(l.to),
     )?.label ?? "Admin";
-  const showPhase = location.pathname !== "/" && !location.pathname.startsWith("/jobs");
 
   useEffect(() => {
     setOpen(false);
@@ -151,17 +140,6 @@ export function Shell({ children }: { children: ReactNode }) {
 
           <div className="topbar-actions">
             <NotificationsMenu open={notifOpen} onOpenChange={setNotifOpen} />
-            {showPhase ? (
-              <span className="phase-pill">Phase | CMS</span>
-            ) : (
-              <div className="top-user">
-                <div className="user-avatar">{initial}</div>
-                <div className="user-meta">
-                  <strong>{name}</strong>
-                  <span>{profile?.role === "admin" ? "Administrator" : "Member"}</span>
-                </div>
-              </div>
-            )}
           </div>
         </header>
         <main className="main">{children}</main>
