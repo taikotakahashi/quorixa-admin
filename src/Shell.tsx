@@ -4,7 +4,6 @@ import {
   Briefcase,
   Building2,
   ChevronRight,
-  Crown,
   ExternalLink,
   FileText,
   FolderKanban,
@@ -15,7 +14,6 @@ import {
   Menu,
   MessageSquareQuote,
   Search,
-  Settings,
   Shield,
   Users,
   X,
@@ -115,32 +113,10 @@ export function Shell({ children }: { children: ReactNode }) {
         </nav>
 
         <div className="sidebar-foot">
-          <div className="upgrade-card">
-            <span className="upgrade-icon">
-              <Crown size={16} />
-            </span>
-            <div>
-              <strong>Upgrade to Pro</strong>
-              <span>Unlock more features and grow faster.</span>
-            </div>
-            <ChevronRight size={16} />
-          </div>
           <a className="nav-link" href="http://quorixa-solution.vercel.app" target="_blank" rel="noreferrer">
             <ExternalLink size={17} strokeWidth={1.9} />
             View website
           </a>
-          <div className="user-chip">
-            <div className="user-avatar">{initial}</div>
-            <div className="user-meta">
-              <strong title={email}>{email || "Admin"}</strong>
-              <span>{profile?.role === "admin" ? "Administrator" : "Member"}</span>
-            </div>
-            <ChevronRight size={16} />
-          </div>
-          <button type="button" className="nav-link nav-btn">
-            <Settings size={17} strokeWidth={1.9} />
-            Settings
-          </button>
           <button type="button" className="nav-link nav-btn" onClick={() => void signOut()}>
             <LogOut size={17} strokeWidth={1.9} />
             Sign out
