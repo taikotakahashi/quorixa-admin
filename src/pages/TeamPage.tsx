@@ -29,6 +29,9 @@ type PersonDraft = {
   teamRole: string;
   leadershipRole: string;
   quote: string;
+  linkedin: string;
+  email: string;
+  phone: string;
   photo_url: string | null;
   sort_order: number;
   published: boolean;
@@ -43,6 +46,9 @@ const empty = (): PersonDraft => ({
   teamRole: "",
   leadershipRole: "",
   quote: "",
+  linkedin: "",
+  email: "",
+  phone: "",
   photo_url: null,
   sort_order: 0,
   published: true,
@@ -61,6 +67,9 @@ function rowToDraft(row: TeamMemberRow): PersonDraft {
     teamRole,
     leadershipRole,
     quote: row.quote ?? "",
+    linkedin: meta.linkedin ?? "",
+    email: meta.email ?? "",
+    phone: meta.phone ?? "",
     photo_url: row.photo_url,
     sort_order: row.sort_order,
     published: row.published,
@@ -82,6 +91,9 @@ function draftToPayload(draft: PersonDraft) {
     bio: serializePersonMeta({
       leadershipRole: leadershipRole || undefined,
       bioText: "",
+      linkedin: draft.linkedin.trim() || undefined,
+      email: draft.email.trim() || undefined,
+      phone: draft.phone.trim() || undefined,
     }),
     sort_order: draft.sort_order,
     published: draft.published,
@@ -116,7 +128,7 @@ export function TeamPage() {
       if (surface === "leadership" && !d.leadershipRole) return false;
       if (surface === "quote" && !d.quote) return false;
       if (!q) return true;
-      return `${d.name} ${d.teamRole} ${d.leadershipRole} ${d.region} ${d.quote}`
+      return `${d.name} ${d.teamRole} ${d.leadershipRole} ${d.region} ${d.quote} ${d.linkedin} ${d.email} ${d.phone}`
         .toLowerCase()
         .includes(q);
     });
@@ -310,6 +322,7 @@ export function TeamPage() {
                   <th>Name</th>
                   <th>Surfaces</th>
                   <th>Roles</th>
+                  <th>Contact</th>
                   <th>Status</th>
                   <th />
                 </tr>
@@ -338,6 +351,17 @@ export function TeamPage() {
                         {d.teamRole && d.leadershipRole ? (
                           <div className="cell-sub">{d.leadershipRole}</div>
                         ) : null}
+                      </td>
+                      <td>
+                        <div className="cell-sub">
+                          {[
+                            d.email ? "Mail" : null,
+                            d.phone ? "Phone" : null,
+                            d.linkedin ? "LinkedIn" : null,
+                          ]
+                            .filter(Boolean)
+                            .join(" · ") || "—"}
+                        </div>
                       </td>
                       <td>
                         <StatusBadge published={row.published} />
@@ -441,6 +465,35 @@ export function TeamPage() {
                 value={editing.leadershipRole}
                 onChange={(e) => setEditing({ ...editing, leadershipRole: e.target.value })}
                 placeholder="CEO"
+              />
+            </label>
+            <div className="field-row">
+              <label className="field">
+                <span>Email</span>
+                <input
+                  type="email"
+                  value={editing.email}
+                  onChange={(e) => setEditing({ ...editing, email: e.target.value })}
+                  placeholder="name@company.com"
+                />
+              </label>
+              <label className="field">
+                <span>Phone</span>
+                <input
+                  type="tel"
+                  value={editing.phone}
+                  onChange={(e) => setEditing({ ...editing, phone: e.target.value })}
+                  placeholder="+1 555 000 0000"
+                />
+              </label>
+            </div>
+            <label className="field">
+              <span>LinkedIn</span>
+              <input
+                type="url"
+                value={editing.linkedin}
+                onChange={(e) => setEditing({ ...editing, linkedin: e.target.value })}
+                placeholder="https://www.linkedin.com/in/…"
               />
             </label>
             <label className="field">
