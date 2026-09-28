@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTheme } from "../theme";
 
 type Props = {
   icon: ReactNode;
@@ -38,15 +39,17 @@ export function MetricCard({
   trend = "12%",
 }: Props) {
   void _tint;
-  const wash = hexToRgba(color, 0.14);
-  const washSoft = hexToRgba(color, 0.04);
+  const { theme } = useTheme();
+  const dark = theme === "dark";
+  const wash = hexToRgba(color, dark ? 0.22 : 0.14);
+  const washSoft = hexToRgba(color, dark ? 0.06 : 0.04);
 
   return (
     <article
       className="metric-card"
       style={{
-        background: `linear-gradient(105deg, ${wash} 0%, ${washSoft} 45%, #ffffff 82%)`,
-        borderColor: hexToRgba(color, 0.12),
+        background: `linear-gradient(105deg, ${wash} 0%, ${washSoft} 48%, var(--surface) 88%)`,
+        borderColor: hexToRgba(color, dark ? 0.28 : 0.12),
       }}
     >
       <div className="metric-main">
@@ -54,7 +57,7 @@ export function MetricCard({
           className="metric-icon"
           style={{
             background: `linear-gradient(145deg, ${hexToRgba(color, 0.88)} 0%, ${color} 100%)`,
-            boxShadow: `0 8px 16px ${hexToRgba(color, 0.28)}`,
+            boxShadow: `0 8px 16px ${hexToRgba(color, dark ? 0.36 : 0.28)}`,
           }}
         >
           {icon}
@@ -69,7 +72,7 @@ export function MetricCard({
         </div>
       </div>
       <svg className="spark" viewBox="0 0 72 36" fill="none" aria-hidden="true">
-        <path d={`${spark} L 68 36 L 2 36 Z`} fill={color} opacity="0.1" />
+        <path d={`${spark} L 68 36 L 2 36 Z`} fill={color} opacity={dark ? 0.18 : 0.1} />
         <path
           d={spark}
           stroke={color}

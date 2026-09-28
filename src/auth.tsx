@@ -3,6 +3,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -44,20 +45,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [profileError, setProfileError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const profileUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     let active = true;
 
-    const load = (next: Session | null) => {
-      setSession(next);
-      if (!next) {
-        setProfile(null);
-        setProfileError(null);
-        setLoading(false);
-        return;
-      }
-      const userId = next.user.id;
-      setLoading(true);
+    const clearProfile = () => {
+      profileUserIdRef.current = null;
+      setProfile(null);
+      setProfileError(null);
+    };
+
+    const fetchProfile = (userId: string, gateUi: boolean) => {
+      if (gateUi) setLoading(true);
+      // Defer so we never call Supabase from inside onAuthStateChange sync work.
       setTimeout(() => {
         void supabase
           .from("profiles")
@@ -66,19 +67,53 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .maybeSingle()
           .then(({ data, error }) => {
             if (!active) return;
-            setProfile((data as Profile | null) ?? null);
+            const nextProfile = (data as Profile | null) ?? null;
+            profileUserIdRef.current = nextProfile?.id ?? userId;
+            setProfile(nextProfile);
             setProfileError(error?.message ?? null);
             setLoading(false);
           });
       }, 0);
     };
 
+    const applySession = (next: Session | null, gateUi: boolean) => {
+      setSession(next);
+      if (!next) {
+        clearProfile();
+        setLoading(false);
+        return;
+      }
+      const userId = next.user.id;
+      if (profileUserIdRef.current === userId) {
+        setLoading(false);
+        return;
+      }
+      fetchProfile(userId, gateUi);
+    };
+
     void supabase.auth.getSession().then(({ data }) => {
-      if (active) load(data.session);
+      if (!active) return;
+      applySession(data.session, true);
     });
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, next) => {
-      if (active) load(next);
+    const { data: sub } = supabase.auth.onAuthStateChange((event, next) => {
+      if (!active) return;
+
+      if (event === "SIGNED_OUT" || !next) {
+        applySession(null, false);
+        return;
+      }
+
+      // Tab focus / JWT refresh — update session only; keep the shell mounted.
+      if (event === "TOKEN_REFRESHED" || event === "USER_UPDATED") {
+        setSession(next);
+        setLoading(false);
+        return;
+      }
+
+      // INITIAL_SESSION / SIGNED_IN: gate UI only when we still need this user's profile.
+      const needsProfile = profileUserIdRef.current !== next.user.id;
+      applySession(next, needsProfile);
     });
 
     return () => {

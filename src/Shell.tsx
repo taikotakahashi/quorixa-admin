@@ -21,6 +21,7 @@ import {
 import { useAuth } from "./auth";
 import { CommandPalette, shortcutLabel } from "./components/CommandPalette";
 import { NotificationsMenu } from "./components/NotificationsMenu";
+import { ThemeToggle } from "./components/ThemeToggle";
 import sidebarLogo from "./assets/uorixa-logo.png";
 
 const links = [
@@ -139,6 +140,7 @@ export function Shell({ children }: { children: ReactNode }) {
           </button>
 
           <div className="topbar-actions">
+            <ThemeToggle />
             <NotificationsMenu open={notifOpen} onOpenChange={setNotifOpen} />
           </div>
         </header>

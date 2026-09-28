@@ -361,37 +361,14 @@ export function LocationsPage() {
               </label>
             </div>
             <div
+              className="pin-preview"
               style={{
-                position: "relative",
-                height: 160,
-                  borderRadius: 7,
-                background:
-                  "linear-gradient(180deg,#e2e8f0,#f8fafc), repeating-linear-gradient(90deg,#cbd5e1 0 1px,transparent 1px 20px), repeating-linear-gradient(#cbd5e1 0 1px,transparent 1px 20px)",
-                border: "1px solid var(--border)",
-                overflow: "hidden",
+                ["--pin-x" as string]: `${editing.x}%`,
+                ["--pin-y" as string]: `${editing.y}%`,
               }}
             >
-              <div
-                title="Pin preview"
-                style={{
-                  position: "absolute",
-                  left: `${editing.x}%`,
-                  top: `${editing.y}%`,
-                  width: 14,
-                  height: 14,
-                  marginLeft: -7,
-                  marginTop: -7,
-                  borderRadius: "50%",
-                  background: "var(--accent)",
-                  boxShadow: "0 0 0 4px rgba(232,93,4,.25)",
-                }}
-              />
-              <span
-                className="muted"
-                style={{ position: "absolute", left: 10, bottom: 8, fontSize: 11 }}
-              >
-                Pin preview (not the real map)
-              </span>
+              <div className="pin-preview-dot" title="Pin preview" />
+              <span className="pin-preview-label">Pin preview (not the real map)</span>
             </div>
             <label className="check-row">
               <input

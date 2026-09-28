@@ -39,7 +39,7 @@ export function ImageField({ bucket, value, onChange, label = "Image" }: Props) 
         ) : (
           <div
             className="thumb-lg"
-            style={{ display: "grid", placeItems: "center", color: "#94a3b8" }}
+            style={{ display: "grid", placeItems: "center" }}
           >
             <ImagePlus size={22} />
           </div>

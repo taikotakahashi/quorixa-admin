@@ -220,8 +220,8 @@ export function DashboardPage() {
           </p>
 
           <div className="live-links">
-            <Link to="/jobs" className="live-link" style={{ background: "#f5f3ff" }}>
-              <span style={{ background: "#ede9fe", color: "#7c3aed" }}>
+            <Link to="/jobs" className="live-link tint-violet">
+              <span>
                 <Pencil size={14} />
               </span>
               <span className="live-copy">
@@ -230,8 +230,8 @@ export function DashboardPage() {
               </span>
               <ChevronRight size={16} />
             </Link>
-            <Link to="/announcements" className="live-link" style={{ background: "#fdf4ff" }}>
-              <span style={{ background: "#fce7f3", color: "#c026d3" }}>
+            <Link to="/announcements" className="live-link tint-fuchsia">
+              <span>
                 <Megaphone size={14} />
               </span>
               <span className="live-copy">
@@ -240,8 +240,8 @@ export function DashboardPage() {
               </span>
               <ChevronRight size={16} />
             </Link>
-            <Link to="/insights" className="live-link" style={{ background: "#ecfdf5" }}>
-              <span style={{ background: "#dcfce7", color: "#16a34a" }}>
+            <Link to="/insights" className="live-link tint-green">
+              <span>
                 <FileText size={14} />
               </span>
               <span className="live-copy">
@@ -250,8 +250,8 @@ export function DashboardPage() {
               </span>
               <ChevronRight size={16} />
             </Link>
-            <Link to="/case-studies" className="live-link" style={{ background: "#fdf2f8" }}>
-              <span style={{ background: "#fce7f3", color: "#db2777" }}>
+            <Link to="/case-studies" className="live-link tint-pink">
+              <span>
                 <FolderKanban size={14} />
               </span>
               <span className="live-copy">
@@ -260,8 +260,8 @@ export function DashboardPage() {
               </span>
               <ChevronRight size={16} />
             </Link>
-            <Link to="/team" className="live-link" style={{ background: "#fff7ed" }}>
-              <span style={{ background: "#ffedd5", color: "#ea580c" }}>
+            <Link to="/team" className="live-link tint-orange">
+              <span>
                 <Users size={14} />
               </span>
               <span className="live-copy">
@@ -292,7 +292,7 @@ export function DashboardPage() {
           </div>
           <div className="quick-list">
             <Link to="/jobs?new=1" className="quick-item">
-              <i style={{ background: "#ede9fe", color: "#7c3aed" }}>
+              <i className="tint-violet">
                 <Briefcase size={16} />
               </i>
               <span className="live-copy">
@@ -302,7 +302,7 @@ export function DashboardPage() {
               <ChevronRight className="chev" size={16} />
             </Link>
             <Link to="/locations" className="quick-item">
-              <i style={{ background: "#dbeafe", color: "#2563eb" }}>
+              <i className="tint-blue">
                 <MapPin size={16} />
               </i>
               <span className="live-copy">
@@ -312,7 +312,7 @@ export function DashboardPage() {
               <ChevronRight className="chev" size={16} />
             </Link>
             <Link to="/team" className="quick-item">
-              <i style={{ background: "#ffedd5", color: "#ea580c" }}>
+              <i className="tint-orange">
                 <Users size={16} />
               </i>
               <span className="live-copy">
@@ -322,7 +322,7 @@ export function DashboardPage() {
               <ChevronRight className="chev" size={16} />
             </Link>
             <Link to="/insights" className="quick-item">
-              <i style={{ background: "#dcfce7", color: "#16a34a" }}>
+              <i className="tint-green">
                 <ArrowUpRight size={16} />
               </i>
               <span className="live-copy">
